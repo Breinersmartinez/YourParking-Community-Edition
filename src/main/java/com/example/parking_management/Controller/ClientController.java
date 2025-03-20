@@ -19,7 +19,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Restcontroller
+
+@RequestMapping(path = "api/v1/clients")
 public class ClientController {
 
+    @Autowired
+
+    private ClientService clientService;
+
+    @GetMapping("{clientId}")
+    public List<Client> getBid(@PathVariable("clientId")Long clientId)
+    {
+return clientService.getClient(clientId);
+    }
     
+
+    @PostMapping
+
+    public void getAll(@RequestBody Client client)
+    {
+        clientService.saveOrUpdate(client);
+    }
+
+    @DeleteMapping("/{clientId}")
+    public void saveOrUpdate(@pathVariable("clientId")Long clientId)
+    {
+        clientService.delete(clientId);
+    }
+  
 }

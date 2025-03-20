@@ -1,5 +1,5 @@
 package com.example.parking_management.Repository;
-import com.example.parking_management.Entity;
+import com.example.parking_management.Entity.Client;
 import java.util.List;
 import java.util.Optional;
 

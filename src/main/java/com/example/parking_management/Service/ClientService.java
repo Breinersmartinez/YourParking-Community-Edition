@@ -1,6 +1,6 @@
 package com.example.parking_management.Service;
-import com.example.parking_management.Entity;
-import com.example.parking_management.Repository;
+import com.example.parking_management.Entity.Client;
+import com.example.parking_management.Repository.ClientRepository;
 
 @Service
 public class ClientService {
