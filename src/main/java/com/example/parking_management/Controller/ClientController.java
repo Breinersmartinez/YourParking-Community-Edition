@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-@Restcontroller
+@RestController
 
 @RequestMapping(path = "api/v1/clients")
 public class ClientController {
@@ -27,10 +27,20 @@ public class ClientController {
 
     private ClientService clientService;
 
-    @GetMapping("{clientId}")
-    public List<Client> getBid(@PathVariable("clientId")Long clientId)
+@GetMapping
+
+public List<Client> getAll()
+{
+    return clientService.getClient();
+}
+
+
+
+    @GetMapping("/{clientId}")
+    public Optional<Client> getBid(@PathVariable("clientId")Long clientId)
     {
-return clientService.getClient(clientId);
+    return clientService.getClient(clientId);
+
     }
     
 
@@ -42,7 +52,7 @@ return clientService.getClient(clientId);
     }
 
     @DeleteMapping("/{clientId}")
-    public void saveOrUpdate(@pathVariable("clientId")Long clientId)
+    public void saveOrUpdate(@PathVariable("clientId")Long clientId)
     {
         clientService.delete(clientId);
     }

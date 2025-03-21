@@ -13,16 +13,17 @@ import lombok.Data;
 @Table (name = "Clientes")
 
 public class Client {
-    @id
+    @Id
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long IdClient;
     private String firstName;
     private String lastName;
     private String password;
+    private String role;
 
 @Column(name="email_adress", unique = true, nullable = false)
-private string email;
+private String email;
 
 }
 

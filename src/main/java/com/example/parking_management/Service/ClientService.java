@@ -1,6 +1,11 @@
 package com.example.parking_management.Service;
 import com.example.parking_management.Entity.Client;
 import com.example.parking_management.Repository.ClientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService {
