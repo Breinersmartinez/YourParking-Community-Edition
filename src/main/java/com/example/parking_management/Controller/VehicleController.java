@@ -17,7 +17,7 @@ public class VehicleController {
 
     @Autowired
 
-    VehicleService vehicleService;
+    private VehicleService vehicleService;
 
 
     @GetMapping

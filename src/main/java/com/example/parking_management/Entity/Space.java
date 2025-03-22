@@ -10,12 +10,19 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "Espacio")
+
 public class Space {
 
 @Id
-@Table(name = "Espacio")
+
+@GeneratedValue(strategy = GenerationType.IDENTITY)
 
 private Long IdEspacio;
+private boolean StateSpace;
+private String TypeSpace;
+
+@Column(name = "Numero_espacio", unique = true, nullable = false)
 private int NumberSpace;
 
 }
