@@ -18,11 +18,11 @@ public class Space {
 
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-private Long IdEspacio;
-private boolean StateSpace;
-private String TypeSpace;
+private Long spaceId;
+private boolean stateSpace;
+private String typeSpace;
 
 @Column(name = "Numero_espacio", unique = true, nullable = false)
-private int NumberSpace;
+private int numberSpace;
 
 }
