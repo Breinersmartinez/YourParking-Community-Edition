@@ -19,7 +19,7 @@ public class Space {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 
 private Long spaceId;
-private boolean stateSpace;
+private String stateSpace;
 private String typeSpace;
 
 @Column(name = "Numero_espacio", unique = true, nullable = false)
