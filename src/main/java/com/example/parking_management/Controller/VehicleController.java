@@ -39,6 +39,8 @@ public class VehicleController {
         vehicleService.saveOrUpdate(vehicle);
     }
 
+
+    
     @DeleteMapping("/{vehicleId}")
     public void saveOrUpdate(@PathVariable("vehicleId") Long vehicleId)
     {
