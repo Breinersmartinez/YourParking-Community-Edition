@@ -2,9 +2,11 @@ package com.example.parking_management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
-@SpringBootApplication
-public class ParkingManagementApplication {
+@SpringBootApplication (exclude = SecurityAutoConfiguration.class)
+public class ParkingManagementApplication
+{
 
 	public static void main(String[] args) {
 		SpringApplication.run(ParkingManagementApplication.class, args);
