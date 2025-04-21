@@ -61,12 +61,15 @@ public class AdminController {
         adminService.delete(idCard);
     }
 
+    //Registro de nuevos administradores
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Admin admin) {
         adminService.save(admin);
         return ResponseEntity.status(HttpStatus.CREATED).body("Administrador registrado correctamente");
     }
 
+
+    //Login con proteccion JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Admin admin) {
         Map<String, Object> response = adminService.login(admin.getIdCard(), admin.getPassword());
