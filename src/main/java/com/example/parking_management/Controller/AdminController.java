@@ -1,12 +1,17 @@
 package com.example.parking_management.Controller;
 
 import com.example.parking_management.Entity.Admin;
+
+import com.example.parking_management.Repository.AdminRepository;
 import com.example.parking_management.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = {
@@ -23,9 +28,12 @@ public class AdminController {
 
 
 
-    @GetMapping("/{idCard}")
-    public Optional<Admin> getById(@PathVariable("idCard") int idCard) {
-        return adminService.getAdmin(idCard);
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Admin> getAll()
+    {
+        return adminService.getAdmin();
     }
 
 
@@ -37,6 +45,7 @@ public class AdminController {
 
 
     @PutMapping("/{idCard}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable("idCard") int idCard, @RequestBody Admin admin) {
         admin.setIdCard(idCard); // Asegura que el ID esté bien asignado
         adminService.Update(admin);
@@ -46,21 +55,29 @@ public class AdminController {
 
 
     @DeleteMapping("/{idCard}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void saveOrUpdate(@PathVariable("idCard")int idCard)
     {
         adminService.delete(idCard);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Admin admin) {
+        adminService.save(admin);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Administrador registrado correctamente");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Admin admin) {
-        boolean valid = adminService.login(admin.getIdCard(), admin.getPassword());
-        if (valid) {
-            return ResponseEntity.ok("Login correcto");
+        Map<String, Object> response = adminService.login(admin.getIdCard(), admin.getPassword());
+
+        if ((Boolean) response.get("success")) {
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login incorrecto");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
+
 
 
 
