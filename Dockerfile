@@ -1,5 +1,5 @@
-FROM amazoncorretto:17-alpine-jdk
-
-COPY target/parking_management-0.0.1-SNAPSHOT.jar /api-v1.jar
-
-ENTRYPOINT ["java", "-jar", "/api-v1.jar"]
+FROM openjdk:17-jdk-slim
+ARG JAR_File=target/parking_management-0.0.1-SNAPSHOT.jar
+COPY ${JAR_File} app_parking_management.jar
+EXPOSE 8080
+ENTRYPOINT  ["java", "-jar", "app_parking_management.jar"]
