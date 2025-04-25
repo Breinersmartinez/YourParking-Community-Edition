@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  parking_management_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking-management-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://parking_management:3306/parking_management?characterEncoding=latin1&useConfigs=maxPerformance
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 3138619952
+      SPRING_JPA_SHOW_SQL: "true"
+      JWT_SECRET: TuClaveSecretaSuperSeguraDeAlMenos256BitsParaHMACSHA256
+      JWT_EXPIRATION: "86400000"
+    depends_on:
+      parking_management:
+        condition: service_healthy
+    restart: always
+
+  parking_management:
+    image: mysql:8.0.33
+    container_name: parking_management
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 3138619952
+      MYSQL_PASSWORD: 3138619952
+      MYSQL_DATABASE: parking_management
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
