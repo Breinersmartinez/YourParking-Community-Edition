@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Table (name = "Clientes")
 
-public class Client {
+public class Client extends User {
     @Id
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

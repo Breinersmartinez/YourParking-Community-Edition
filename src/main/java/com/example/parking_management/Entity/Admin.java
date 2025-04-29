@@ -11,7 +11,7 @@ import lombok.Data;
 // Nombre de la tabla de la base de datos que esta mapeada la entidad
 @Table(name = "Administrador")
 @Data
-public class Admin {
+public class Admin extends User{
     @Id
 
     // Atributos y tablas relacionadas en la bd
