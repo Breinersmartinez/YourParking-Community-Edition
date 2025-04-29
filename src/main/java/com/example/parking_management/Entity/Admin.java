@@ -18,7 +18,11 @@ public class Admin {
 
     @Column(name="IdentificacionAdministrador", unique = true, nullable = false)
     private int idCard;
+
+    @Column(name="nameAdmin")
     private  String nameAdmin;
+
+    @Column(name="password")
     private String password;
 
 
