@@ -1,8 +1,8 @@
 package com.example.parking_management.JWT;
 
 
-import com.example.parking_management.Entity.Admin;
-import com.example.parking_management.Repository.AdminRepository;
+import com.example.parking_management.model.Admin;
+import com.example.parking_management.repository.AdminRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
