@@ -1,4 +1,4 @@
 package com.example.parking_management.service;
 
-public class Pay {
+public class TicketService {
 }

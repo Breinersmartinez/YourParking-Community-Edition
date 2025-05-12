@@ -7,6 +7,8 @@ import java.util.Date;
 
 @Data
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table (name = "USUARIO")
 public class User   {
 
     @Id
@@ -21,17 +23,7 @@ public class User   {
  @Column(name="CONTRASEÑA")
  private String password;
 
- @Column(name = "CORREO")
- private String email;
 
- @Column(name = "NUMERO_TELEFONO")
- private int phoneNumber;
-
- @Column(name = "DIRECCION")
- private String direction;
-
- @Column(name = "FECHA_REGISTRO")
- private Date registrationDate;
 
  public int getIdCard() {
   return idCard;
@@ -57,35 +49,4 @@ public class User   {
   this.password = password;
  }
 
- public String getEmail() {
-  return email;
- }
-
- public void setEmail(String email) {
-  this.email = email;
- }
-
- public int getPhoneNumber() {
-  return phoneNumber;
- }
-
- public void setPhoneNumber(int phoneNumber) {
-  this.phoneNumber = phoneNumber;
- }
-
- public String getDirection() {
-  return direction;
- }
-
- public void setDirection(String direction) {
-  this.direction = direction;
- }
-
- public Date getRegistrationDate() {
-  return registrationDate;
- }
-
- public void setRegistrationDate(Date registrationDate) {
-  this.registrationDate = registrationDate;
- }
 }

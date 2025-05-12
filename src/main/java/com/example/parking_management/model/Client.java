@@ -8,30 +8,57 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-@Data 
+
+import java.util.Date;
+
 @Entity
+@Table (name = "CLIENTE")
 
-@Table (name = "Clientes")
-
-public class Client extends Auditable<String>
+public class Client extends User
 {
-    @Id
-    // Atributos y tablas relacionadas en la bd
-    @Column(name="IDENTIFICACION", unique = true, nullable = false)
-    private int idCard;
+    @Column(name = "CORREO")
+    private String email;
 
-    @Column(name="NOMBRE")
-    private  String name;
+    @Column(name = "NUMERO_TELEFONO")
+    private int phoneNumber;
 
-    @Column(name="CONTRASEÑA")
-    private String password;
+    @Column(name = "DIRECCION")
+    private String direction;
 
-    @Column(name = "")
-    private String role;
+    @Column(name = "FECHA_REGISTRO")
+    private Date registrationDate;
 
-@Column(name="email_adress", unique = true, nullable = false)
-private String email;
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }
 
 

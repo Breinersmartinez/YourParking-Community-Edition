@@ -1,64 +1,82 @@
 package com.example.parking_management.controller;
 
-import java.util.List;
-import java.util.Optional;
 
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 
 import  com.example.parking_management.service.ClientService;
 import  com.example.parking_management.model.Client;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://Breynersmartinez.github.io"
+})
 
 @RestController
-
-@RequestMapping(path = "api/v1/clients")
+@RequestMapping("/Cliente")
 public class ClientController {
-
     @Autowired
-
     private final ClientService clientService;
-    public ClientController(ClientService clientService)
-    {
+
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
     }
 
-@GetMapping
-
-public List<Client> getAll()
-{
-    return clientService.getClient();
-}
-
-
 
     @GetMapping("/{clientIdCard}")
-    public Optional<Client> getBid(@PathVariable("clientIdCard")Long idCard)
-    {
-    return clientService.getClient(idCard);
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<Client> getBid(@PathVariable("clientIdCard") int idCard) {
+        return clientService.getClient(idCard);
 
     }
-    
+
 
     @PostMapping
-
-    public void getAll(@RequestBody Client client)
-    {
-        clientService.saveOrUpdate(client);
+    public void getAll(@RequestBody Client client) {
+        clientService.save(client);
     }
 
-    @DeleteMapping("/{clientIdCard}")
-    public void saveOrUpdate(@PathVariable("clientIdCard")Long idCard)
-    {
+
+    @PutMapping("/{idCard}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable("idCard") int idCard, @RequestBody Client client) {
+        client.setIdCard(idCard); // Asegura que el ID esté bien asignado
+        clientService.update(client);
+        return ResponseEntity.ok("Administador actualizado");
+    }
+
+
+    @DeleteMapping("/{idCard}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void saveOrUpdate(@PathVariable("idCard") int idCard) {
         clientService.delete(idCard);
     }
-  
+
+    //Registro de nuevos administradores
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Client client) {
+        clientService.save(client);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Cliente registrado correctamente");
+    }
+
+
+    //Login con proteccion JWT
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Client client) {
+        Map<String, Object> response = clientService.login(client.getIdCard(), client.getPassword());
+
+        if ((Boolean) response.get("success")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
 }

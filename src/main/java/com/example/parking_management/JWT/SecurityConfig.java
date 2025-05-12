@@ -43,6 +43,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/Administrador/login",
                                 "/Administrador/register",
+                                "/Cliente/login",
+                                "/Cliente/register",
+                                "/Usuarios/login",
+                                "/Usuarios/register",
+
 
                                 // Swagger
                                 "/v3/api-docs/**",
@@ -76,6 +81,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 
 }

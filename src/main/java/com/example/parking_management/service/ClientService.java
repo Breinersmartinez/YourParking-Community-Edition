@@ -4,36 +4,24 @@ import com.example.parking_management.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
+
 @Service
-public class ClientService {
+public class ClientService extends UserService{
 
     @Autowired
 
-ClientRepository clientRepository;
+   ClientRepository clientRepository;
+
+    public Optional<Client> getClient(int idCard)
+    {
+        return clientRepository.findById(idCard);
+    }
 
 
-public List<Client> getClient()
-{
-    return clientRepository.findAll();
-}
 
 
-public Optional<Client> getClient(Long idCard)
-{
-    return clientRepository.findById(idCard);
-}
 
 
-public void saveOrUpdate(Client client)
-{
-    clientRepository.save(client);
-}
-
-public void delete( Long idCard)
-{
-    clientRepository.deleteById(idCard);
-}
 }

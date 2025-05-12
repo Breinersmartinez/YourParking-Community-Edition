@@ -34,11 +34,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // 👇 Ignorar login y register
-        if (path.equals("/Administrador/login") || path.equals("/Administrador/register")) {
+        // Permitir las rutas de login y register para todos los tipos de usuarios
+        if (path.equals("/Administrador/login") || path.equals("/Administrador/register") ||
+                path.equals("/Cliente/login") || path.equals("/Cliente/register") ||
+                path.equals("/Usuarios/login") || path.equals("/Usuarios/register"))
+        {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -56,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

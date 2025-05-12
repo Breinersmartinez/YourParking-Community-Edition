@@ -1,4 +1,4 @@
 package com.example.parking_management.controller;
 
-public class Ticket {
+public class PayController {
 }
