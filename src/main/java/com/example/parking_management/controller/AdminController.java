@@ -32,7 +32,7 @@ public class AdminController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_USER')")  // Esto es correcto si defines el rol como "ROLE_ADMIN"
+    @PreAuthorize("hasRole('ROLE_ADMIN')")  // Esto es correcto si defines el rol como "ROLE_ADMIN"
     public List<Admin> getAll() {
         return adminService.getAdmin();
     }
@@ -46,7 +46,7 @@ public class AdminController {
 
 
     @PutMapping("/{idCard}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable("idCard") int idCard, @RequestBody Admin admin) {
         admin.setIdCard(idCard); // Asegura que el ID esté bien asignado
         adminService.update(admin);
@@ -56,7 +56,7 @@ public class AdminController {
 
 
     @DeleteMapping("/{idCard}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void saveOrUpdate(@PathVariable("idCard")int idCard)
     {
         adminService.delete(idCard);
