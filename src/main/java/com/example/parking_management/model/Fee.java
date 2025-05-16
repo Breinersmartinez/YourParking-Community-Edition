@@ -10,13 +10,22 @@ import lombok.Data;
 @Table(name="Tarifas")
 public class Fee {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdTarifa")
-    private Long feeId;
+    @Column(name = "ID_TARIFA")
+    private int feeId;
 
-    @Column(unique = true, nullable = false)
-    private String typeVehicle;
+    @Column (name = "VALOR_HORA")
+    private int hourValue;
 
-    private Double hourValue;
-    private Double dayValue;
+    @Column (name = "VALOR_DIA")
+    private int dayValue;
+
+    @Column (name = "VALOR_MES")
+    private int monthlyValue;
+
+
+    @Column (name = "VALOR_AÑO")
+    private int yearValue;
+
+    //------------------- Llaves Foraneas --------------
+
 }

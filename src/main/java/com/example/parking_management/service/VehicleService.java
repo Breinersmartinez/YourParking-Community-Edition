@@ -20,9 +20,9 @@ public class VehicleService {
   }
 
 
-  public Optional<Vehicle> getVehicle(Long Id)
+  public Optional<Vehicle> getVehicle(int vehicleId)
   {
-      return vehicleRepository.findById(Id);
+      return vehicleRepository.findById(vehicleId);
   }
 
   public void saveOrUpdate(Vehicle vehicle)
@@ -30,8 +30,8 @@ public class VehicleService {
       vehicleRepository.save(vehicle);
   }
 
-  public void delete(Long id)
+  public void delete(int   vehicleId)
   {
-      vehicleRepository.deleteById(id);
+      vehicleRepository.deleteById(vehicleId);
   }
 }

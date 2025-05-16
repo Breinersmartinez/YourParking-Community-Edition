@@ -31,7 +31,7 @@ public class VehicleController {
 
 
     @GetMapping("/{vehicleId}")
-    public Optional<Vehicle> getById(@PathVariable("vehicleId") Long vehicleId)
+    public Optional<Vehicle> getById(@PathVariable("vehicleId") int vehicleId)
     {
         return vehicleService.getVehicle(vehicleId);
     }
@@ -45,7 +45,7 @@ public class VehicleController {
 
     
     @DeleteMapping("/{vehicleId}")
-    public void saveOrUpdate(@PathVariable("vehicleId") Long vehicleId)
+    public void saveOrUpdate(@PathVariable("vehicleId") int vehicleId)
     {
         vehicleService.delete(vehicleId);
     }

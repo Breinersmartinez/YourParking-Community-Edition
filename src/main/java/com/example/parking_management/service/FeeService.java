@@ -20,7 +20,7 @@ public List<Fee> getFee()
     return feeRepository.findAll();
 }
 
-public Optional<Fee> getFee(Long id)
+public Optional<Fee> getFee(int id)
 {
     return feeRepository.findById(id);
 }
@@ -30,7 +30,7 @@ public void saveOrUpdate(Fee fee)
     feeRepository.save(fee);
 }
 
-public void delete(Long id)
+public void delete(int id)
 {
     feeRepository.deleteById(id);
 }

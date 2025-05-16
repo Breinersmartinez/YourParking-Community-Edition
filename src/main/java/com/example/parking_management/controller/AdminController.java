@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = {
         "http://localhost:5173",
@@ -21,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/Administrador")
 public class AdminController {
-    @Autowired
+
     private final AdminService adminService;
     public AdminController(AdminService adminService)
     {
@@ -37,12 +38,20 @@ public class AdminController {
         return adminService.getAdmin();
     }
 
+    @GetMapping("/{idCard}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Optional<Admin> getById(@PathVariable("idCard") int idCard)
+    {
+        return adminService.getAdmin(idCard);
+    }
+
 
     @PostMapping
     public void getAll(@RequestBody Admin admin)
     {
         adminService.save(admin);
     }
+
 
 
     @PutMapping("/{idCard}")
@@ -73,7 +82,7 @@ public class AdminController {
     //Login con proteccion JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Admin admin) {
-        Map<String, Object> response = adminService.login(admin.getIdCard(), admin.getPassword());
+        Map<String, Object> response = adminService.loginByIdCard(admin.getIdCard(), admin.getPassword());
 
         if ((Boolean) response.get("success")) {
             return ResponseEntity.ok(response);

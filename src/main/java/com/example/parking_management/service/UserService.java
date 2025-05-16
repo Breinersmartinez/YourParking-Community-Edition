@@ -2,6 +2,7 @@ package com.example.parking_management.service;
 
 import com.example.parking_management.JWT.JwtService;
 import com.example.parking_management.model.Admin;
+import com.example.parking_management.model.Client;
 import com.example.parking_management.model.User;
 import com.example.parking_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +34,6 @@ public class UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-
-
-    public List<User> getUser()
-    {
-        return userRepository.findAll();
-    }
-
-
-    public Optional<User> getUser(int  idCard)
-    {
-        return userRepository.findById(idCard);
-    }
 
 
     public void save(User user)
@@ -92,45 +80,64 @@ public class UserService {
             userRepository.deleteById(idCard);
         }
 
-    // Método modificado para devolver token JWT
-    public Map<String, Object> login(int idCard, String rawPassword) {
+
+    // Login para ADMIN por CÉDULA
+    public Map<String, Object> loginByIdCard(int idCard, String rawPassword) {
         Map<String, Object> response = new HashMap<>();
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            String.valueOf(idCard),
-                            rawPassword
-                    )
-            );
+        Optional<User> userOpt = userRepository.findById(idCard);
+        if (userOpt.isPresent() && userOpt.get() instanceof Admin) {
+            User user = userOpt.get();
+            if (encoder.matches(rawPassword, user.getPassword())) {
+                String role = "ROLE_ADMIN";
 
-            if (authentication.isAuthenticated()) {
-                Optional<User> user = userRepository.findById(idCard);
-                if (user.isPresent()) {
-                    String role = "ROLE_USER"; // Cambiado de "ROL_USER" a "ROLE_USER"
-                    if(user.get() instanceof Admin) {
-                        role = "ROLE_ADMIN";
-                    }
+                UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                        .username(String.valueOf(user.getIdCard()))
+                        .password(user.getPassword())
+                        .authorities(role)
+                        .build();
 
-                    UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                            .username(String.valueOf(idCard))
-                            .password(user.get().getPassword())
-                            .authorities(role)
-                            .build();
+                String token = jwtService.generateToken(userDetails);
 
-                    String token = jwtService.generateToken(userDetails);
-
-                    response.put("success", true);
-                    response.put("token", token);
-                    response.put("user", user.get());
-                    response.put("role", role); // Añadir el rol para depuración
-                    return response;
-                }
+                response.put("success", true);
+                response.put("token", token);
+                response.put("user", user);
+                response.put("role", role);
+                return response;
             }
-        } catch (Exception e) {
-            // Agregamos logs para facilitar la depuración
-            System.err.println("Error en autenticación: " + e.getMessage());
-            e.printStackTrace();
+        }
+
+        response.put("success", false);
+        response.put("message", "Credenciales inválidas");
+        return response;
+    }
+
+
+
+    // Login para CLIENTE por CORREO
+    public Map<String, Object> loginByEmail(String email, String rawPassword) {
+        Map<String, Object> response = new HashMap<>();
+
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent() && userOpt.get() instanceof Client) {
+            User user = userOpt.get();
+            if (encoder.matches(rawPassword, user.getPassword())) {
+                String role = "ROLE_CLIENT";
+
+                UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getEmail())
+                        .password(user.getPassword())
+                        .authorities(role)
+                        .build();
+
+                String token = jwtService.generateToken(userDetails);
+
+                response.put("success", true);
+                response.put("token", token);
+                response.put("user", user);
+                response.put("role", role);
+                return response;
+            }
         }
 
         response.put("success", false);

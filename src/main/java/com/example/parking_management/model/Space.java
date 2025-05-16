@@ -15,14 +15,18 @@ import lombok.Data;
 public class Space {
 
 @Id
-
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-
+@Column (name = "ID_ESPACIO")
 private Long spaceId;
+
+@Column(name = "NUMERO_ESPACIO", unique = true, nullable = false)
+private int numberSpace;
+
+@Column (name = "ESTADO_ESPACIO")
 private String stateSpace;
+
+@Column (name = "TIPO_ESPACIO")
 private String typeSpace;
 
-@Column(name = "Numero_espacio", unique = true, nullable = false)
-private int numberSpace;
+
 
 }

@@ -51,7 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     return new User(
                             String.valueOf(client.getIdCard()),
                             client.getPassword(),
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_CLIENT"))
                     );
                 }
 

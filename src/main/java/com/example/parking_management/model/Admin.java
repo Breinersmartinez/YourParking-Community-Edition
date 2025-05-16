@@ -9,4 +9,5 @@ import jakarta.persistence.Table;
 // Nombre de la tabla de la base de datos que esta mapeada la entidad
 @Table(name = "ADMINISTRADOR")
 public class Admin extends User {
+
 }

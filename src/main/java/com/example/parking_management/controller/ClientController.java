@@ -23,20 +23,19 @@ import  com.example.parking_management.model.Client;
 @RestController
 @RequestMapping("/Cliente")
 public class ClientController {
-    @Autowired
-    private final ClientService clientService;
 
+    private final ClientService clientService;
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
     }
 
 
-    @GetMapping("/{clientIdCard}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Optional<Client> getBid(@PathVariable("clientIdCard") int idCard) {
+    @GetMapping("/{idCard}")
+    public Optional<Client> getById(@PathVariable("idCard") int idCard) {
         return clientService.getClient(idCard);
 
     }
+
 
 
     @PostMapping
@@ -46,16 +45,14 @@ public class ClientController {
 
 
     @PutMapping("/{idCard}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable("idCard") int idCard, @RequestBody Client client) {
         client.setIdCard(idCard); // Asegura que el ID esté bien asignado
         clientService.update(client);
-        return ResponseEntity.ok("Administador actualizado");
+        return ResponseEntity.ok("Cliente actualizado");
     }
 
 
     @DeleteMapping("/{idCard}")
-    @PreAuthorize("hasRole('ADMIN')")
     public void saveOrUpdate(@PathVariable("idCard") int idCard) {
         clientService.delete(idCard);
     }
@@ -71,7 +68,7 @@ public class ClientController {
     //Login con proteccion JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Client client) {
-        Map<String, Object> response = clientService.login(client.getIdCard(), client.getPassword());
+        Map<String, Object> response = clientService.loginByEmail(client.getEmail(), client.getPassword());
 
         if ((Boolean) response.get("success")) {
             return ResponseEntity.ok(response);
@@ -79,4 +76,5 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
+
 }

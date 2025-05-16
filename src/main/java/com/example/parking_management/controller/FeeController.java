@@ -28,7 +28,7 @@ public class FeeController {
 
 
     @GetMapping("/{feeId}")
-    public Optional<Fee> getById(@PathVariable("feeId") Long feeId)
+    public Optional<Fee> getById(@PathVariable("feeId") int feeId)
     {
         return feeService.getFee(feeId);
     }
@@ -42,7 +42,7 @@ public class FeeController {
 
 
     @DeleteMapping("/{feeId}")
-    public void saveOrUpdate(@PathVariable("freeId") Long feeId)
+    public void saveOrUpdate(@PathVariable("freeId") int feeId)
     {
         feeService.delete(feeId);
     }
