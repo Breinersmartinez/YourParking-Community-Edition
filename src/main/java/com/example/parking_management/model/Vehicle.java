@@ -41,7 +41,7 @@ public class Vehicle {
     private LocalDateTime departureDate; // Fecha de salida
 
 
-
+/*
     // ------------- Llaves foraneas ---------
     // Llave foranea
     @ManyToOne
@@ -52,5 +52,5 @@ public class Vehicle {
     @OneToOne
     @JoinColumn (name = "ID_TIPO_VEHICULO")
     private TypeVehicle typeVehicle;
-
+*/
 }

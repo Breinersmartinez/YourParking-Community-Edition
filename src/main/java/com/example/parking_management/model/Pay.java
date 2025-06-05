@@ -23,8 +23,11 @@ public class Pay {
     @Column (name = "MONTO")
     private Double amount;
 
+    /*
     //  Llave foranea
     @OneToOne
     @JoinColumn(name = "ID_METODO_PAGO")
    private PaymentMethod paymentMethod;
+   */
+
 }

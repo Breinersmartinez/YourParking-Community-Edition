@@ -23,8 +23,6 @@ public class Fee {
     private int monthlyValue;
 
 
-    @Column (name = "VALOR_AÑO")
-    private int yearValue;
 
     //------------------- Llaves Foraneas --------------
 

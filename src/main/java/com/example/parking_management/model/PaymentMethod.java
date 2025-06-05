@@ -18,8 +18,10 @@ public class PaymentMethod {
     @Column (name = "METODO_PAGO")
     private String PaymentMethod;
 
-
+/*
     // Relacion de mapeo de objetos JPA de uno a uno
     @OneToOne (mappedBy = "paymentMethod", cascade = CascadeType.ALL)
     private Pay pay;
+
+ */
 }

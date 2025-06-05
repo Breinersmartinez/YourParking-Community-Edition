@@ -13,9 +13,9 @@ public class TypeVehicle {
     @Column(name = "TIPO_VEHICULO")
     private String TypeVehicle;
 
-
+/*
     // Llaves foraneas
     @OneToOne(mappedBy = "typeVehicle", cascade = CascadeType.ALL)
     private Vehicle vehicle;
-
+*/
 }

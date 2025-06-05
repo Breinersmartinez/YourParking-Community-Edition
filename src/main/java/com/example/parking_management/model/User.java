@@ -38,7 +38,7 @@ public class User extends Auditable<User>  {
 
 
     // Relaciones de mapeo de objetos JPA de uno a uno
-
+/*
     @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
    private List<Vehicle> vehicles;
 
@@ -47,7 +47,7 @@ public class User extends Auditable<User>  {
 
    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
    private List<Booking> bookings;
-
+*/
 
 
 

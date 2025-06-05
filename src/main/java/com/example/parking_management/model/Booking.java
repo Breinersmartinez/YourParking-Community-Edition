@@ -25,11 +25,14 @@ public class Booking {
     @Column (name = "ESTADO")
   private String state;
 
+    /*
 
   // Llaves foraneas
 
     @ManyToOne
     @JoinColumn(name = "IDENTIFICACION" )
     private User user;
+
+     */
 
 }
