@@ -17,7 +17,8 @@ import  com.example.parking_management.model.Client;
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://Breynersmartinez.github.io"
+        "https://Breynersmartinez.github.io",
+        "https://aplicacion-de-gestion-para-parqueadero.vercel.app"
 })
 
 @RestController

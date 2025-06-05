@@ -16,6 +16,7 @@ import java.util.Optional;
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
+        "https://aplicacion-de-gestion-para-parqueadero.vercel.app",
         "https://Breynersmartinez.github.io"
 })
 
