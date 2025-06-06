@@ -29,9 +29,6 @@ public class ClientService extends UserService {
     @Autowired
     ClientRepository clientRepository;
 
-    public List<Client> getClient() {
-        return clientRepository.findAll();
-    }
 
     public Optional<Client> getClient(int idCard) {
         return clientRepository.findById(idCard);

@@ -2,7 +2,9 @@ package com.example.parking_management.service;
 
 
 import com.example.parking_management.model.Admin;
+import com.example.parking_management.model.Client;
 import com.example.parking_management.repository.AdminRepository;
+import com.example.parking_management.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,12 @@ public class AdminService extends UserService{
 
     AdminRepository adminRepository;
 
+    @Autowired
+    ClientRepository clientRepository;
+
+    public List<Client> getClient() {
+        return clientRepository.findAll();
+    }
 
     public List<Admin> getAdmin()
     {

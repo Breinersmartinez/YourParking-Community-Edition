@@ -2,7 +2,9 @@ package com.example.parking_management.controller;
 
 import com.example.parking_management.model.Admin;
 
+import com.example.parking_management.model.Client;
 import com.example.parking_management.service.AdminService;
+import com.example.parking_management.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RequestMapping("/Administrador")
 public class AdminController {
 
+
     private final AdminService adminService;
     public AdminController(AdminService adminService)
     {
@@ -37,6 +40,12 @@ public class AdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")  // Esto es correcto si defines el rol como "ROLE_ADMIN"
     public List<Admin> getAll() {
         return adminService.getAdmin();
+    }
+
+
+    @GetMapping("/Clients")
+    public List<Client> getAllClients() {
+        return adminService.getClient();
     }
 
     @GetMapping("/{idCard}")
