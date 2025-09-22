@@ -1,6 +1,3 @@
-Perfecto, aquí tienes la versión **en inglés** del README.md, lista para usar:
-
-
 # Parking Management API
 
 Parking Management API is a RESTful system developed with **Spring Boot 3.4.3** for managing parking facilities.  
