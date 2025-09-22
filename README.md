@@ -1,155 +1,144 @@
+Perfecto, aquí tienes la versión **en inglés** del README.md, lista para usar:
 
-###  ENTIDADES Y ATRIBUTOS (con relaciones)
 
----
+# Parking Management API
 
-####  `USUARIO` (User)
+Parking Management API is a RESTful system developed with **Spring Boot 3.4.3** for managing parking facilities.  
+It includes JWT authentication, user management (administrators and clients), vehicle registration, reservations, ticket generation, and payment processing.
 
-Hereda en `ADMINISTRADOR` y `CLIENTE`
-
-* `identificacion` (PK)
-* `nombre`
-* `contraseña`
-* `correo`
-* `numero_telefono`
-* `direccion`
-* `fecha_registro`
-
-Relaciones:
-
-* 1\:N con `VEHICULO` (un usuario puede tener varios vehículos)
-* 1\:N con `TICKET` (si decides asociar directamente)
-* 1\:N con `BOOKING` (si reservas espacios)
+Demo: [https://parking-management-api-k4ih.onrender.com/](https://parking-management-api-k4ih.onrender.com/)  
+Swagger UI: [https://parking-management-api-k4ih.onrender.com/swagger-ui.html](https://parking-management-api-k4ih.onrender.com/swagger-ui.html)
 
 ---
 
-####  `ADMINISTRADOR` (Admin)
+## Main Features
 
-Hereda de `USUARIO`
+- Authentication and Roles  
+  - Administrators and clients with permission control using Spring Security + JWT.  
+  - Passwords encrypted with BCrypt.  
 
-* Mismos atributos, no requiere nuevos
+- Parking Management  
+  - Vehicle registration and tracking.  
+  - Space management and availability monitoring.  
+  - Reservation system and entry/exit ticket management.  
 
----
+- Payments and Pricing  
+  - Dynamic pricing configurable by vehicle type (hourly, daily, monthly, yearly).  
+  - Payment tracking with multiple methods.  
+  - Automatic billing calculation based on parking duration.  
 
-####  `CLIENTE` (Client)
+- Integrated Documentation  
+  - Swagger UI and OpenAPI 3.0 available at `/swagger-ui.html`.  
 
-Hereda de `USUARIO`
-
-* Igual que Admin
-
----
-
-####  `VEHICULO` (Vehicle)
-
-* `id_vehiculo` (PK)
-* `identificacion` (FK a USUARIO)
-* `placa_vehiculo` (única)
-* `tipo_vehiculo`
-* `marca_vehiculo`
-* `color_vehiculo`
-* `tarjeta_propiedad`
-* `hora_entrada`
-* `hora_salida`
-
-Relaciones:
-
-* N:1 con `USUARIO`
-* 1:1 con `TICKET` (opcional)
-* N:1 con `ESPACIO` (si asocias directamente)
-* N:1 con `TARIFA` (según tipo de vehículo)
+- Infrastructure and Deployment  
+  - Persistence with **MySQL 8.0**.  
+  - Containerization with **Docker** and orchestration using **Docker Compose**.  
+  - CORS enabled for multiple frontend applications.  
+  - Stateless architecture with JWT → horizontally scalable.  
 
 ---
 
-####  `ESPACIO` (Space)
+## Architecture
 
-* `space_id` (PK)
-* `numero_espacio` (único)
-* `estado_espacio` (libre/ocupado)
-* `tipo_espacio` (moto, carro...)
+- Backend: Spring Boot 3.4.3 (REST API)  
+- Security: Spring Security + JWT  
+- Persistence: Spring Data JPA + PostgreSQL 
+- Documentation: SpringDoc OpenAPI 2.8.6 (Swagger UI)  
+- Infrastructure: Docker, Docker Compose  
+- Build: Maven 3.x  
+- Runtime: Java 17  
 
-Relaciones:
-
-* 1\:N con `BOOKING` o `TICKET` si reservas espacio específico
-
----
-
-####  `TARIFA` (Fee)
-
-* `id_tarifa` (PK)
-* `tipo_vehiculo` (único)
-* `valor_hora`
-* `valor_dia`
-
-Relaciones:
-
-* 1\:N con `VEHICULO` (opcional si se quiere saber cuánto pagar por tipo)
+Data model includes entities for `User`, `Vehicle`, `ParkingSpace`, `Reservation`, `Ticket`, `Payment`.  
 
 ---
 
-####  `BOOKING` (Reserva de espacio)
+## Installation and Running
 
-**(Diseñala así)**
-
-* `id_booking` (PK)
-* `id_usuario` (FK)
-* `id_espacio` (FK)
-* `fecha_inicio`
-* `fecha_fin`
-* `estado` (activa, cancelada)
+### Prerequisites
+- Java 17+  
+- Maven 3.6+ (or use the included wrapper `./mvnw`)  
+- Postgres 17  
+- Docker (optional)  
 
 ---
 
-####  `TICKET`
+### Local Execution
+Clone the repository:
+```bash
+git clone https://github.com/Breynersmartinez/parking-management-api.git
+cd parking-management-api
+````
 
-* `id_ticket` (PK)
-* `id_vehiculo` (FK)
-* `id_usuario` (FK)
-* `id_espacio` (FK, opcional)
-* `fecha_entrada`
-* `fecha_salida`
-* `valor_total`
+Compile and run:
 
----
+```bash
+./mvnw spring-boot:run
+```
 
-####  `PAGO` (Pay)
+API access:
 
-**(Podrías agregar algo así)**
+```
+http://localhost:8080
+```
 
-* `id_pago` (PK)
-* `id_ticket` (FK)
-* `fecha_pago`
-* `monto`
-* `metodo_pago` (efectivo, tarjeta...)
+Swagger UI access:
 
----
-
-###  MRD (Modelo Relacional de Datos)
-
-Te lo muestro en texto (puedo generar un diagrama si lo necesitas también):
-
-```plaintext
-USUARIO (identificacion PK, nombre, contraseña, correo, telefono, direccion, fecha_registro)
-    ↑
-    ├── CLIENTE (identificacion PK, FK)
-    └── ADMINISTRADOR (identificacion PK, FK)
-
-VEHICULO (id_vehiculo PK, placa UNIQUE, tipo, marca, color, tarjeta_propiedad, hora_entrada, hora_salida, identificacion FK)
-
-ESPACIO (space_id PK, numero_espacio UNIQUE, estado_espacio, tipo_espacio)
-
-TARIFA (id_tarifa PK, tipo_vehiculo UNIQUE, valor_hora, valor_dia)
-
-TICKET (id_ticket PK, id_vehiculo FK, id_usuario FK, id_espacio FK, fecha_entrada, fecha_salida, valor_total)
-
-BOOKING (id_booking PK, id_usuario FK, id_espacio FK, fecha_inicio, fecha_fin, estado)
-
-PAGO (id_pago PK, id_ticket FK, fecha_pago, monto, metodo_pago)
+```
+http://localhost:8080/swagger-ui.html
 ```
 
 ---
-### Spring Data JPA - Mapeo de relaciones entre entidades - uno a muchos y muchos a uno
 
-``` bash
-https://www.tutorialesprogramacionya.com/springbootya/detalleconcepto.php?punto=14&codigo=15&inicio=0
+### Docker Execution
+
+Build and run with Docker:
+
+```bash
+docker build -t parking-management-api .
+docker run -p 8080:8080 parking-management-api
 ```
+
+Or with Docker Compose (API + MySQL):
+
+```bash
+docker-compose up --build
+```
+
+Services:
+
+* API → `http://localhost:8080`
+* PostgreSQL → localhost:5432
+
+---
+
+## Main Environment Variables
+
+| Variable                     | Description                   |
+| ---------------------------- | ----------------------------- |
+| `SPRING_DATASOURCE_URL`      | URL de conexión a PostgreSQL / PostgreSQL connection URL         |
+| `SPRING_DATASOURCE_USERNAME` | Database user                 |
+| `SPRING_DATASOURCE_PASSWORD` | Database password             |
+| `JWT_SECRET`                 | Secret key to sign JWT tokens |
+| `JWT_EXPIRATION`             | Token expiration time         |
+
+---
+
+## Documentation
+
+* Online API: [Swagger UI](https://parking-management-api-k4ih.onrender.com/swagger-ui.html)
+* DeepWiki: [Detailed documentation](https://deepwiki.com/Breynersmartinez/parking-management-api)
+
+---
+
+## Author
+
+Breiner Martínez
+
+* GitHub: [@Breynersmartinez](https://github.com/Breynersmartinez)
+* Portfolio: https://my-portfolio-tau-green-52.vercel.app
+
+```
+
+---
+
 
