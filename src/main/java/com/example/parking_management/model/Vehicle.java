@@ -1,6 +1,7 @@
 package com.example.parking_management.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +10,8 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Setter
-@Getter
+@Builder
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "VEHICULO")
 public class Vehicle {
     @Id
@@ -19,8 +20,11 @@ public class Vehicle {
     private int vehicleId;
 
 
-    @Column (name = "PLACA_VEHICULO",  unique = true, nullable = false)
-    private Long plate; // PLACA_VEHICULO
+    @Column (name = "PLACA_VEHICULO")
+    private String plate; // PLACA_VEHICULO
+
+    @Column (name = "TIPO_VEHICULO")
+    private String typeVehicle;
 
 
     //Marca del vehiculo
@@ -40,17 +44,78 @@ public class Vehicle {
     @Column (name = "HORA_SALIDA")
     private LocalDateTime departureDate; // Fecha de salida
 
+    public Vehicle(int vehicleId, String plate, String brandVehicle, String typeVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
+        this.vehicleId = vehicleId;
+        this.plate = plate;
+        this.brandVehicle = brandVehicle;
+        this.typeVehicle = typeVehicle;
+        this.colorVehicle = colorVehicle;
+        this.propertyCard = propertyCard;
+        this.entryDate = entryDate;
+        this.departureDate = departureDate;
+    }
 
-/*
-    // ------------- Llaves foraneas ---------
-    // Llave foranea
-    @ManyToOne
-    @JoinColumn (name = "IDENTIFICACION")
-    private User user;
+    public String getTypeVehicle() {
+        return typeVehicle;
+    }
 
-    // Llave Foranea
-    @OneToOne
-    @JoinColumn (name = "ID_TIPO_VEHICULO")
-    private TypeVehicle typeVehicle;
-*/
+    public void setTypeVehicle(String typeVehicle) {
+        this.typeVehicle = typeVehicle;
+    }
+
+    public int getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getPlate() {
+        return plate;
+    }
+
+    public void setPlate(String plate) {
+        this.plate = plate;
+    }
+
+    public String getBrandVehicle() {
+        return brandVehicle;
+    }
+
+    public void setBrandVehicle(String brandVehicle) {
+        this.brandVehicle = brandVehicle;
+    }
+
+    public String getColorVehicle() {
+        return colorVehicle;
+    }
+
+    public void setColorVehicle(String colorVehicle) {
+        this.colorVehicle = colorVehicle;
+    }
+
+    public LocalDateTime getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(LocalDateTime entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public String getPropertyCard() {
+        return propertyCard;
+    }
+
+    public void setPropertyCard(String propertyCard) {
+        this.propertyCard = propertyCard;
+    }
+
+    public LocalDateTime getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(LocalDateTime departureDate) {
+        this.departureDate = departureDate;
+    }
 }

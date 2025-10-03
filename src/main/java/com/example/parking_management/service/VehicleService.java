@@ -1,12 +1,16 @@
 package com.example.parking_management.service;
 
+import com.example.parking_management.dto.*;
+import com.example.parking_management.model.User;
 import com.example.parking_management.model.Vehicle;
 import com.example.parking_management.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VehicleService {
@@ -14,10 +18,16 @@ public class VehicleService {
   @Autowired
     VehicleRepository vehicleRepository;
 
-  public List<Vehicle> getVehicle()
+  public List<VehicleResponse> getAllVehicles()
   {
-      return vehicleRepository.findAll();
+      return vehicleRepository.findAll()
+              .stream()
+              .map(this::convertToResponse)
+              .collect(Collectors.toList());
   }
+
+
+
 
 
   public Optional<Vehicle> getVehicle(int vehicleId)
@@ -25,13 +35,60 @@ public class VehicleService {
       return vehicleRepository.findById(vehicleId);
   }
 
-  public void saveOrUpdate(Vehicle vehicle)
+
+  public VehicleResponse saveOrUpdate(VehicleRequest request)
   {
-      vehicleRepository.save(vehicle);
+      // Verificar si el email ya existe
+
+      if (vehicleRepository.findByPlate(request.getPlate()).isPresent()) {
+          throw new RuntimeException("El Vehiculo ya está registrado");
+      }
+
+        // mapeo request - entidad
+       Vehicle vehicle =  Vehicle.builder()
+               .plate(request.getPlate())
+               .typeVehicle(request.getTypeVehicle())
+               .brandVehicle(request.getBrandVehicle())
+               .colorVehicle(request.getColorVehicle())
+               .departureDate(request.getDepartureDate())
+               .propertyCard(request.getPropertyCard())
+               .entryDate(request.getEntryDate())
+               .vehicleId(request.getVehicleId())
+               .build();
+        //guardar
+       vehicleRepository.save(vehicle);
+
+       //Retornar dto
+      return VehicleResponse.builder()
+          .plate(vehicle.getPlate())
+              .typeVehicle(vehicle.getTypeVehicle())
+          .brandVehicle(vehicle.getBrandVehicle())
+          .colorVehicle(vehicle.getColorVehicle())
+          .departureDate(vehicle.getDepartureDate())
+          .propertyCard(vehicle.getPropertyCard())
+          .entryDate(vehicle.getEntryDate())
+          .vehicleId(vehicle.getVehicleId())
+          .build();
   }
 
   public void delete(int   vehicleId)
   {
       vehicleRepository.deleteById(vehicleId);
   }
+
+
+    // Convertir Vehicle a VehicleResponse
+    private VehicleResponse convertToResponse(Vehicle vehicle) {
+        return VehicleResponse.builder()
+                .plate(vehicle.getPlate())
+                .brandVehicle(vehicle.getBrandVehicle())
+                .colorVehicle(vehicle.getColorVehicle())
+                .departureDate(vehicle.getDepartureDate())
+                .propertyCard(vehicle.getPropertyCard())
+                .entryDate(vehicle.getEntryDate())
+                .vehicleId(vehicle.getVehicleId())
+                .build();
+
+
+    }
 }

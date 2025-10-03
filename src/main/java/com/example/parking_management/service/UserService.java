@@ -1,149 +1,151 @@
 package com.example.parking_management.service;
 
-import com.example.parking_management.JWT.JwtService;
-import com.example.parking_management.model.Admin;
-import com.example.parking_management.model.Client;
+
+import com.example.parking_management.dto.UpdateUserRequest;
+import com.example.parking_management.dto.UserResponse;
+
 import com.example.parking_management.model.User;
 import com.example.parking_management.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-
-    public void save(User user)
-    {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-
-    public void update(User user)
-    {
-        Optional<User> existinUser = userRepository.findById(user.getIdCard());
-
-        if(existinUser.isPresent()) {
-            User userFromDb = existinUser.get();
-
-
-            //Actualizacion de nombre de usuario
-            userFromDb.setName(user.getName());
-
-            //Solo actualiza la contraseña si viene una nueva (no vacia o nula)
-            String nuevaContrasenia = user.getPassword();
-            if (nuevaContrasenia != null && !nuevaContrasenia.trim().isEmpty())
-            {
-                // si la nueva contraseña es distinta (no esta ya codificada igual), la actualiza
-                if (!encoder.matches(nuevaContrasenia, userFromDb.getPassword()))
-                {
-                    userFromDb.setPassword(encoder.encode(nuevaContrasenia));
-                }
-            }
-            userRepository.save(userFromDb);
-            }
-            else
-            {
-                // si no existe, lo crea con la nueva contraseña codificada
-                user.setPassword(encoder.encode(user.getPassword()));
-                userRepository.save(user);
-            }
-
-        }
-
-        public void delete(int idCard)
-        {
-            userRepository.deleteById(idCard);
-        }
-
-
-    // Login para ADMIN por CÉDULA
-    public Map<String, Object> loginByIdCard(int idCard, String rawPassword) {
-        Map<String, Object> response = new HashMap<>();
-
-        Optional<User> userOpt = userRepository.findById(idCard);
-        if (userOpt.isPresent() && userOpt.get() instanceof Admin) {
-            User user = userOpt.get();
-            if (encoder.matches(rawPassword, user.getPassword())) {
-                String role = "ROLE_ADMIN";
-
-                UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                        .username(String.valueOf(user.getIdCard()))
-                        .password(user.getPassword())
-                        .authorities(role)
-                        .build();
-
-                String token = jwtService.generateToken(userDetails);
-
-                response.put("success", true);
-                response.put("token", token);
-                response.put("user", user);
-                response.put("role", role);
-                return response;
-            }
-        }
-
-        response.put("success", false);
-        response.put("message", "Credenciales inválidas");
-        return response;
+    // Obtener todos los usuarios
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-
-
-    // Login para CLIENTE por CORREO
-    public Map<String, Object> loginByEmail(String email, String rawPassword) {
-        Map<String, Object> response = new HashMap<>();
-
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent() && userOpt.get() instanceof Client) {
-            User user = userOpt.get();
-            if (encoder.matches(rawPassword, user.getPassword())) {
-                String role = "ROLE_CLIENT";
-
-                UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                        .username(user.getEmail())
-                        .password(user.getPassword())
-                        .authorities(role)
-                        .build();
-
-                String token = jwtService.generateToken(userDetails);
-
-                response.put("success", true);
-                response.put("token", token);
-                response.put("user", user);
-                response.put("role", role);
-                return response;
-            }
-        }
-
-        response.put("success", false);
-        response.put("message", "Credenciales inválidas");
-        return response;
+    // Obtener usuario por ID
+    public UserResponse getUserById(Integer idCard) {
+        User user = userRepository.findById(idCard)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
+        return convertToResponse(user);
     }
 
+    // Obtener usuario por email
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+        return convertToResponse(user);
+    }
+
+    // Actualizar usuario
+    @Transactional
+    public UserResponse updateUser(Integer idCard, UpdateUserRequest request) {
+        User user = userRepository.findById(idCard)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
+
+        // Actualizar solo los campos que no son nulos
+        if (request.getName() != null && !request.getName().isEmpty()) {
+            user.setName(request.getName());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            // Verificar que el email no esté en uso por otro usuario
+            userRepository.findByEmail(request.getEmail())
+                    .ifPresent(existingUser -> {
+                        if (!existingUser.getIdCard().equals(idCard)) {
+                            throw new RuntimeException("El email ya está en uso");
+                        }
+                    });
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+
+        if (request.getDirection() != null) {
+            user.setDirection(request.getDirection());
+        }
+
+        if (request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
+
+        if (request.getActive() != null) {
+            user.setActive(request.getActive());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return convertToResponse(updatedUser);
+    }
+
+    // Eliminar usuario (eliminación física)
+    @Transactional
+    public void deleteUser(Integer idCard) {
+        User user = userRepository.findById(idCard)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
+        userRepository.delete(user);
+    }
+
+    // Desactivar usuario (eliminación lógica - recomendado)
+    @Transactional
+    public UserResponse deactivateUser(Integer idCard) {
+        User user = userRepository.findById(idCard)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
+        user.setActive(false);
+        User updatedUser = userRepository.save(user);
+        return convertToResponse(updatedUser);
+    }
+
+    // Activar usuario
+    @Transactional
+    public UserResponse activateUser(Integer idCard) {
+        User user = userRepository.findById(idCard)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
+        user.setActive(true);
+        User updatedUser = userRepository.save(user);
+        return convertToResponse(updatedUser);
+    }
+
+    // Obtener usuarios activos
+    public List<UserResponse> getActiveUsers() {
+        return userRepository.findByActive(true).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener usuarios por rol
+    public List<UserResponse> getUsersByRole(User.Role role) {
+        return userRepository.findByRole(role).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // Convertir User a UserResponse (sin exponer la contraseña)
+    private UserResponse convertToResponse(User user) {
+        return UserResponse.builder()
+                .idCard(user.getIdCard())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .direction(user.getDirection())
+                .role(user.getRole())
+                .registrationDate(user.getRegistrationDate())
+                .active(user.getActive())
+                .build();
+    }
 }
-

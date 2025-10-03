@@ -1,9 +1,13 @@
 package com.example.parking_management.controller;
 
 
+import com.example.parking_management.dto.VehicleRequest;
+import com.example.parking_management.dto.VehicleResponse;
 import com.example.parking_management.model.Vehicle;
 import com.example.parking_management.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,27 +28,46 @@ public class VehicleController {
 
 
     @GetMapping
-    public List<Vehicle> getAll()
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<VehicleResponse>> getAllVehicles()
     {
-        return vehicleService.getVehicle();
+        try {
+            List<VehicleResponse> Vehilces = vehicleService.getAllVehicles();
+            return ResponseEntity.ok(Vehilces);
+        }
+        catch (Exception e)
+        {
+          return   ResponseEntity.internalServerError().build();
+        }
     }
 
 
     @GetMapping("/{vehicleId}")
+    @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
     public Optional<Vehicle> getById(@PathVariable("vehicleId") int vehicleId)
     {
         return vehicleService.getVehicle(vehicleId);
     }
 
     @PostMapping
-    public void getAll(@RequestBody Vehicle vehicle )
+    public ResponseEntity<VehicleResponse> getAll(@RequestBody VehicleRequest request )
     {
-        vehicleService.saveOrUpdate(vehicle);
+        try
+        {
+            return ResponseEntity.ok(vehicleService.saveOrUpdate(request));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
 
     
     @DeleteMapping("/{vehicleId}")
+    @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
     public void saveOrUpdate(@PathVariable("vehicleId") int vehicleId)
     {
         vehicleService.delete(vehicleId);
