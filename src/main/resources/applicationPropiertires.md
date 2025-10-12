@@ -1,3 +1,5 @@
+# Conguratios of application
+
 spring.datasource.url=${URL_DB}
 spring.datasource.username=${USER_NAME}
 spring.datasource.password=${PASSWORD_DB}
@@ -11,12 +13,16 @@ spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.Ph
 
 
 
-
+## JWT Configuration
+# IMPORTANTE: Genera una clave secreta segura (mínimo 256 bits)
+# Puedes usar: openssl rand -base64 32
 jwt.secret.key=${TOKEN_JWT}
 jwt.expiration.time=86400000
 
+## Puerto del servidor
+```
 server.port=8080
-
+```
 
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
@@ -25,6 +31,7 @@ spring.mail.password=${APP_PASSWORD}
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 spring.mail.properties.mail.smtp.starttls.required=true
+
 
 
 
