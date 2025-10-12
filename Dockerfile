@@ -15,7 +15,7 @@ COPY src/ src/
 RUN chmod +x mvnw
 
 # Se empaqueta la aplicación sin ejecutar tests
-#RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:23-jre

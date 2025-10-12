@@ -173,7 +173,6 @@ public class User extends Auditable<User> implements UserDetails {
     }
 
 
-
     // Enum para roles
     public enum Role {
         ADMIN,

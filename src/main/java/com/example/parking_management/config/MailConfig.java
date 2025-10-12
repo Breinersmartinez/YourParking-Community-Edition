@@ -36,7 +36,8 @@ public class MailConfig {
     }
 
     //Bean confirmacio de mensaje recibido
-    @Bean // this is a template message that we can pre-load with default state
+    @Bean
+    // this is a template message that we can pre-load with default state
     SimpleMailMessage templateMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mail);

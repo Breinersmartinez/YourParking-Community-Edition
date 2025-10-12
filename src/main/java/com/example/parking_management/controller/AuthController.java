@@ -1,10 +1,9 @@
 package com.example.parking_management.controller;
 
-import com.example.parking_management.dto.AuthResponse;
-import com.example.parking_management.dto.LoginRequest;
-import com.example.parking_management.dto.RegisterRequest;
+import com.example.parking_management.dto.authDTO.AuthResponse;
+import com.example.parking_management.dto.authDTO.LoginRequest;
+import com.example.parking_management.dto.userDTO.RegisterRequest;
 import com.example.parking_management.service.AuthService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

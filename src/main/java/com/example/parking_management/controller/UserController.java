@@ -1,12 +1,11 @@
 package com.example.parking_management.controller;
 
-import com.example.parking_management.dto.UpdateUserRequest;
-import com.example.parking_management.dto.UserResponse;
+import com.example.parking_management.dto.userDTO.UpdateUserRequest;
+import com.example.parking_management.dto.userDTO.UserResponse;
 
 
 import com.example.parking_management.model.User;
 import com.example.parking_management.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

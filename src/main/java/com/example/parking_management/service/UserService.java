@@ -1,12 +1,11 @@
 package com.example.parking_management.service;
 
 
-import com.example.parking_management.dto.UpdateUserRequest;
-import com.example.parking_management.dto.UserResponse;
+import com.example.parking_management.dto.userDTO.UpdateUserRequest;
+import com.example.parking_management.dto.userDTO.UserResponse;
 
 import com.example.parking_management.model.User;
 import com.example.parking_management.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -23,7 +23,7 @@ public class Auditable<U> {
     private U createdBy;
 
     @CreatedDate
-    @Column(name = "FECHA_CREACION", updatable = false )
+    @Column(name = "FECHA_CREACION", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 

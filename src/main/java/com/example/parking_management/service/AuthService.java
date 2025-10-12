@@ -1,16 +1,15 @@
 package com.example.parking_management.service;
 
 
-import com.example.parking_management.dto.AuthResponse;
-import com.example.parking_management.dto.LoginRequest;
-import com.example.parking_management.dto.RegisterRequest;
+import com.example.parking_management.dto.authDTO.AuthResponse;
+import com.example.parking_management.dto.authDTO.LoginRequest;
+import com.example.parking_management.dto.userDTO.RegisterRequest;
 import com.example.parking_management.jwt.JwtService;
 
 
 import com.example.parking_management.model.User;
 import com.example.parking_management.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;

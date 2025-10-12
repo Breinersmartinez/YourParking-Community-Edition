@@ -15,33 +15,33 @@ import java.time.LocalDateTime;
 @Table(name = "VEHICULO")
 public class Vehicle {
     @Id
-    @Column (name = "ID_VEHICULO")
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_VEHICULO")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int vehicleId;
 
 
-    @Column (name = "PLACA_VEHICULO")
+    @Column(name = "PLACA_VEHICULO")
     private String plate; // PLACA_VEHICULO
 
-    @Column (name = "TIPO_VEHICULO")
+    @Column(name = "TIPO_VEHICULO")
     private String typeVehicle;
 
 
     //Marca del vehiculo
-    @Column (name = "MARCA_VEHICULO")
+    @Column(name = "MARCA_VEHICULO")
     private String brandVehicle;
 
 
-    @Column (name = "COLOR_VEHICULO")
+    @Column(name = "COLOR_VEHICULO")
     private String colorVehicle;
 
-    @Column (name = "TARJETA_PROPIEDAD")
+    @Column(name = "TARJETA_PROPIEDAD")
     private String propertyCard; // TARJTETA DE PROPIEDAD
 
-    @Column (name = "HORA_ENTRADA")
+    @Column(name = "HORA_ENTRADA")
     private LocalDateTime entryDate; // Fecha de entrada
 
-    @Column (name = "HORA_SALIDA")
+    @Column(name = "HORA_SALIDA")
     private LocalDateTime departureDate; // Fecha de salida
 
     public Vehicle(int vehicleId, String plate, String brandVehicle, String typeVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
