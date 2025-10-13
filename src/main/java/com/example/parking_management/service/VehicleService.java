@@ -25,8 +25,8 @@ public class VehicleService {
     }
 
 
-    public Optional<Vehicle> getVehicle(int vehicleId) {
-        return vehicleRepository.findById(vehicleId);
+    public Optional<Vehicle> getVehicle(String plate) {
+        return vehicleRepository.findByPlate(plate);
     }
 
 
@@ -46,7 +46,6 @@ public class VehicleService {
                 .departureDate(request.getDepartureDate())
                 .propertyCard(request.getPropertyCard())
                 .entryDate(request.getEntryDate())
-                .vehicleId(request.getVehicleId())
                 .build();
         //guardar
         vehicleRepository.save(vehicle);
@@ -60,12 +59,11 @@ public class VehicleService {
                 .departureDate(vehicle.getDepartureDate())
                 .propertyCard(vehicle.getPropertyCard())
                 .entryDate(vehicle.getEntryDate())
-                .vehicleId(vehicle.getVehicleId())
                 .build();
     }
 
-    public void delete(int vehicleId) {
-        vehicleRepository.deleteById(vehicleId);
+    public void delete(String plate) {
+        vehicleRepository.deleteByPlate(plate);
     }
 
 
@@ -78,7 +76,6 @@ public class VehicleService {
                 .departureDate(vehicle.getDepartureDate())
                 .propertyCard(vehicle.getPropertyCard())
                 .entryDate(vehicle.getEntryDate())
-                .vehicleId(vehicle.getVehicleId())
                 .build();
 
 

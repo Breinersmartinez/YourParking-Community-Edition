@@ -15,11 +15,11 @@ import java.util.Optional;
 
 @RestController
 
-@RequestMapping(path = "api/vehicles")
+@RequestMapping( "api/vehicles")
 
 public class VehicleController {
 
-    @Autowired
+
     private final VehicleService vehicleService;
 
     public VehicleController(VehicleService vehicleService) {
@@ -39,14 +39,18 @@ public class VehicleController {
     }
 
 
-    @GetMapping("/{vehicleId}")
-    @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
-    public Optional<Vehicle> getById(@PathVariable("vehicleId") int vehicleId) {
-        return vehicleService.getVehicle(vehicleId);
+    @GetMapping("/{plate}")
+    @PreAuthorize("hasRole('USER')")
+    public Optional<Vehicle> getById(@PathVariable("plate") String plate) {
+        return vehicleService.getVehicle(plate);
     }
 
+    //Crear vehiculo
     @PostMapping
+    @PreAuthorize("hasRole('USER')" )
     public ResponseEntity<VehicleResponse> getAll(@RequestBody VehicleRequest request) {
+
+
         try {
             return ResponseEntity.ok(vehicleService.saveOrUpdate(request));
         } catch (Exception e) {
@@ -57,10 +61,10 @@ public class VehicleController {
     }
 
 
-    @DeleteMapping("/{vehicleId}")
+    @DeleteMapping("/{plate}")
     @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
-    public void saveOrUpdate(@PathVariable("vehicleId") int vehicleId) {
-        vehicleService.delete(vehicleId);
+    public void saveOrUpdate(@PathVariable("plate") String plate) {
+        vehicleService.delete(plate);
     }
 
 }

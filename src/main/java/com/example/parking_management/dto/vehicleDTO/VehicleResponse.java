@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleResponse {
-    private int vehicleId;
+
     private String plate; // PLACA_VEHICULO
     private String typeVehicle;
 

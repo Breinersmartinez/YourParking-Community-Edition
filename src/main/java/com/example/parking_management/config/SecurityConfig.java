@@ -28,6 +28,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
@@ -40,6 +41,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Endpoints públicos
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo admin
+
+
+                        // AUTORIZACION PARA LA DOCUMENTACION CON SWAGGER
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api/auth/**" // tus endpoints públicos de autenticación
+                        ).permitAll()
+
                         .anyRequest().authenticated() // Todo lo demás requiere autenticación
                 )
                 .sessionManagement(session -> session

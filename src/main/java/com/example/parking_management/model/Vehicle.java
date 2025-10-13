@@ -15,11 +15,6 @@ import java.time.LocalDateTime;
 @Table(name = "VEHICULO")
 public class Vehicle {
     @Id
-    @Column(name = "ID_VEHICULO")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int vehicleId;
-
-
     @Column(name = "PLACA_VEHICULO")
     private String plate; // PLACA_VEHICULO
 
@@ -44,8 +39,9 @@ public class Vehicle {
     @Column(name = "HORA_SALIDA")
     private LocalDateTime departureDate; // Fecha de salida
 
-    public Vehicle(int vehicleId, String plate, String brandVehicle, String typeVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
-        this.vehicleId = vehicleId;
+
+    public Vehicle( String plate, String brandVehicle, String typeVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
+
         this.plate = plate;
         this.brandVehicle = brandVehicle;
         this.typeVehicle = typeVehicle;
@@ -63,13 +59,6 @@ public class Vehicle {
         this.typeVehicle = typeVehicle;
     }
 
-    public int getVehicleId() {
-        return vehicleId;
-    }
-
-    public void setVehicleId(int vehicleId) {
-        this.vehicleId = vehicleId;
-    }
 
     public String getPlate() {
         return plate;

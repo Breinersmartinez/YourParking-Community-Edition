@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleRequest {
-    private int vehicleId;
     private String plate; // PLACA_VEHICULO
     private String typeVehicle;
     //Marca del vehiculo
