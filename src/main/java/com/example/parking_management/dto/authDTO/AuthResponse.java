@@ -3,6 +3,7 @@ package com.example.parking_management.dto.authDTO;
 
 
 import com.example.parking_management.model.User;
+import com.example.parking_management.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,6 @@ public class AuthResponse {
     private String email;
     private String firstName;
     private String lastName;
-    private User.Role role;
+    private Role role;
     private String message;
 }

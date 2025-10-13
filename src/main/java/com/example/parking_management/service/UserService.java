@@ -5,6 +5,7 @@ import com.example.parking_management.dto.userDTO.UpdateUserRequest;
 import com.example.parking_management.dto.userDTO.UserResponse;
 
 import com.example.parking_management.model.User;
+import com.example.parking_management.model.enums.Role;
 import com.example.parking_management.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class UserService {
     }
 
     // Obtener usuarios por rol
-    public List<UserResponse> getUsersByRole(User.Role role) {
+    public List<UserResponse> getUsersByRole(Role role) {
         return userRepository.findByRole(role).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -142,6 +143,7 @@ public class UserService {
     private UserResponse convertToResponse(User user) {
         return UserResponse.builder()
                 .idCard(user.getIdCard())
+                .identificationType(user.getIdentificationType())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())

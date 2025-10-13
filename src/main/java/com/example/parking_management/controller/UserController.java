@@ -5,6 +5,7 @@ import com.example.parking_management.dto.userDTO.UserResponse;
 
 
 import com.example.parking_management.model.User;
+import com.example.parking_management.model.enums.Role;
 import com.example.parking_management.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,7 +78,7 @@ public class UserController {
     // Obtener usuarios por rol (solo admin)
     @GetMapping("/role/{role}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponse>> getUsersByRole(@PathVariable User.Role role) {
+    public ResponseEntity<List<UserResponse>> getUsersByRole(@PathVariable Role role) {
         try {
             List<UserResponse> users = userService.getUsersByRole(role);
             return ResponseEntity.ok(users);

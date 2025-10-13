@@ -2,6 +2,8 @@ package com.example.parking_management.model;
 
 import com.example.parking_management.audit.Auditable;
 
+import com.example.parking_management.model.enums.IdentificationType;
+import com.example.parking_management.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -183,7 +185,6 @@ public class User extends Auditable<User> implements UserDetails {
         this.identificationType = identificationType;
     }
 
-
     public String getFirstName() {
         return firstName;
     }
@@ -200,18 +201,7 @@ public class User extends Auditable<User> implements UserDetails {
         this.lastName = lastName;
     }
 
-    // Enum para roles
-    public enum Role {
-        ADMIN,
-        USER
-    }
 
-    public enum IdentificationType {
-        TI,
-        CC,
-        NUIP,
-        CE,
-        P
-    }
+
 
 }
