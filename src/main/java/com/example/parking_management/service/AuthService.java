@@ -59,7 +59,9 @@ public class AuthService {
         // Crear el usuario
         User user = new User();
         user.setIdCard(request.getIdCard());
-        user.setName(request.getName());
+        user.setIdentificationType(request.getIdentificationType());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword())); // Encriptar contraseña
         user.setPhoneNumber(request.getPhoneNumber());
@@ -75,7 +77,7 @@ public class AuthService {
         msg.setTo(user.getEmail());
         msg.setSubject("¡Bienvenido al sistema de Parqueadero! "); // Asunto más claro
         msg.setText(
-                "Hola " + user.getName() + ",\n\n" +
+                "Hola " + user.getFirstName() + user.getLastName() + ",\n\n" +
                         "Tu registro en el sistema de parqueadero se ha realizado con éxito.\n\n" +
                         " Fecha de registro: " + user.getRegistrationDate() + "\n" +
                         " Usuario (email): " + user.getEmail() + "\n\n" +
@@ -100,7 +102,8 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtToken)
                 .email(user.getEmail())
-                .name(user.getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .role(user.getRole())
                 .message("Usuario registrado exitosamente")
                 .build();
@@ -125,7 +128,8 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtToken)
                 .email(user.getEmail())
-                .name(user.getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .role(user.getRole())
                 .message("Login exitoso")
                 .build();

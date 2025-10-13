@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserResponse {
     private Integer idCard;
-    private String name;
+    private User.IdentificationType identificationType;
+    private String firstName;
+    private String lastName;
     private String email;
     private String phoneNumber;
     private String direction;

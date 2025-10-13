@@ -14,7 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateUserRequest {
-    private String name;
+    private Integer idCard;
+    private User.IdentificationType identificationType;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password; // Opcional, solo si se quiere cambiar
     private String phoneNumber;

@@ -23,8 +23,15 @@ public class User extends Auditable<User> implements UserDetails {
     @Column(name = "IDENTIFICACION", unique = true, nullable = false)
     private Integer idCard;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_IDENTIFICACION",  nullable = false)
+    private IdentificationType identificationType;
+
     @Column(name = "NOMBRE", nullable = false)
-    private String name;
+    private String firstName;
+
+    @Column(name = "APELLIDO", nullable = false)
+    private String lastName;
 
     @Column(name = "CONTRASEÑA", nullable = false)
     private String password;
@@ -48,14 +55,15 @@ public class User extends Auditable<User> implements UserDetails {
     @Column(name = "ACTIVO")
     private Boolean active = true;
 
-
-    public User(Integer idCard, String name, String password, String email, String direction, String phoneNumber, LocalDateTime registrationDate, Role role, Boolean active) {
+    public User(Integer idCard, IdentificationType identificationType, String firstName, String lastName, String password, String email, String phoneNumber, String direction, LocalDateTime registrationDate, Role role, Boolean active) {
         this.idCard = idCard;
-        this.name = name;
+        this.identificationType = identificationType;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.password = password;
         this.email = email;
-        this.direction = direction;
         this.phoneNumber = phoneNumber;
+        this.direction = direction;
         this.registrationDate = registrationDate;
         this.role = role;
         this.active = active;
@@ -83,6 +91,7 @@ public class User extends Auditable<User> implements UserDetails {
         return true;
     }
 
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -107,13 +116,7 @@ public class User extends Auditable<User> implements UserDetails {
         this.idCard = idCard;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String getPassword() {
@@ -172,10 +175,43 @@ public class User extends Auditable<User> implements UserDetails {
         this.active = active;
     }
 
+    public IdentificationType getIdentificationType() {
+        return identificationType;
+    }
+
+    public void setIdentificationType(IdentificationType identificationType) {
+        this.identificationType = identificationType;
+    }
+
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     // Enum para roles
     public enum Role {
         ADMIN,
         USER
     }
+
+    public enum IdentificationType {
+        TI,
+        CC,
+        NUIP,
+        CE,
+        P
+    }
+
 }

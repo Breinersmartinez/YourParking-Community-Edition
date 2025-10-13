@@ -17,7 +17,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterRequest {
     private Integer idCard;
-    private String name;
+    private User.IdentificationType identificationType;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
     private String phoneNumber;

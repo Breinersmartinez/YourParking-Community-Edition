@@ -53,8 +53,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idCard));
 
         // Actualizar solo los campos que no son nulos
-        if (request.getName() != null && !request.getName().isEmpty()) {
-            user.setName(request.getName());
+        if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
+            user.setFirstName(request.getFirstName());
+        }
+
+        if (request.getLastName() != null && !request.getLastName().isEmpty()) {
+            user.setLastName(request.getLastName());
         }
 
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
@@ -138,7 +142,8 @@ public class UserService {
     private UserResponse convertToResponse(User user) {
         return UserResponse.builder()
                 .idCard(user.getIdCard())
-                .name(user.getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .direction(user.getDirection())
