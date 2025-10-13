@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RequestMapping("/api/v1/mercadopago")
+@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
 public class MercadoPago {
 
     private final MercadoPagoService mercadoPagoService;
@@ -29,8 +31,10 @@ public class MercadoPago {
         this.mercadoPagoService = mercadoPagoService;
     }
 
+    //     Tanto los usuarios como los administradores pueden realizar peticiones
+//     Los usuarios y administradores deben utilizar su respectivo tockend para poder realizar las peticiones
+
     @PostMapping("/preference")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> getIdPreference() {
         // Crear una instancia del logger
         Logger logger = LoggerFactory.getLogger(this.getClass());

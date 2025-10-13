@@ -50,7 +50,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/api/auth/**" // tus endpoints públicos de autenticación
+                                "/api/auth/**" //  endpoints públicos de autenticación
                         ).permitAll()
 
                         .anyRequest().authenticated() // Todo lo demás requiere autenticación

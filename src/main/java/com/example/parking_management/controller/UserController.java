@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-
+@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
 public class UserController {
 
     private final UserService userService;
@@ -37,8 +37,10 @@ public class UserController {
     }
 
     // Obtener usuario por ID (admin o el mismo usuario)
+    //     Tanto los usuarios como los administradores pueden realizar peticiones
+//     Los usuarios y administradores deben utilizar su respectivo tockend para poder realizar las peticiones
+
     @GetMapping("/{idCard}")
-    @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Integer idCard) {
         try {
             UserResponse user = userService.getUserById(idCard);

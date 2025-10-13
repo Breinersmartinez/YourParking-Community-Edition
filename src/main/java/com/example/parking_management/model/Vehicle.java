@@ -1,10 +1,8 @@
 package com.example.parking_management.model;
 
+import com.example.parking_management.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "VEHICULO")
-public class Vehicle {
+public class Vehicle  extends Auditable<Vehicle> {
     @Id
     @Column(name = "PLACA_VEHICULO")
     private String plate; // PLACA_VEHICULO
@@ -40,15 +38,18 @@ public class Vehicle {
     private LocalDateTime departureDate; // Fecha de salida
 
 
-    public Vehicle( String plate, String brandVehicle, String typeVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
-
+    public Vehicle(String plate, String typeVehicle, String brandVehicle, String colorVehicle, String propertyCard, LocalDateTime entryDate, LocalDateTime departureDate) {
         this.plate = plate;
-        this.brandVehicle = brandVehicle;
         this.typeVehicle = typeVehicle;
+        this.brandVehicle = brandVehicle;
         this.colorVehicle = colorVehicle;
         this.propertyCard = propertyCard;
         this.entryDate = entryDate;
         this.departureDate = departureDate;
+    }
+
+    public Vehicle() {
+
     }
 
     public String getTypeVehicle() {

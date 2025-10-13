@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-
-@RequestMapping( "api/vehicles")
-
+@RequestMapping("api/vehicles")
+@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
 public class VehicleController {
 
 
@@ -27,6 +26,7 @@ public class VehicleController {
     }
 
 
+    //LISTAR LOS VEHICULOS
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<VehicleResponse>> getAllVehicles() {
@@ -38,16 +38,21 @@ public class VehicleController {
         }
     }
 
-
+    // TRAER VEHICULO POR PLACA
+    /*
+     * Tanto los usuarios como los administradores pueden realizar peticiones
+     * Los usuarios y administradores deben utilizar su respectivo tockend para poder realizar las peticiones
+     * */
     @GetMapping("/{plate}")
-    @PreAuthorize("hasRole('USER')")
     public Optional<Vehicle> getById(@PathVariable("plate") String plate) {
         return vehicleService.getVehicle(plate);
     }
 
     //Crear vehiculo
+//     Tanto los usuarios como los administradores pueden realizar peticiones
+//     Los usuarios y administradores deben utilizar su respectivo tockend para poder realizar las peticiones
+
     @PostMapping
-    @PreAuthorize("hasRole('USER')" )
     public ResponseEntity<VehicleResponse> getAll(@RequestBody VehicleRequest request) {
 
 
@@ -62,7 +67,6 @@ public class VehicleController {
 
 
     @DeleteMapping("/{plate}")
-    @PreAuthorize("hasRole('ADMIN') or #idCard == authentication.principal.idCard")
     public void saveOrUpdate(@PathVariable("plate") String plate) {
         vehicleService.delete(plate);
     }
