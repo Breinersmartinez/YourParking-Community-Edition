@@ -1,7 +1,7 @@
 package com.example.parking_management.repository;
 
 
-import com.example.parking_management.model.Vehicle;
+import com.example.parking_management.model.vehicles.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

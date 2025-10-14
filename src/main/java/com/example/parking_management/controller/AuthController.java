@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/auth")
 
 public class AuthController {

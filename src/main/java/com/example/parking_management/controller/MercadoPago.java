@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RequestMapping("/api/v1/mercadopago")
-@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
+@CrossOrigin(origins = "*")
 public class MercadoPago {
 
     private final MercadoPagoService mercadoPagoService;

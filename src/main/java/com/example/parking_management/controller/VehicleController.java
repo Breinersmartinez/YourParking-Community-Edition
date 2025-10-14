@@ -3,9 +3,8 @@ package com.example.parking_management.controller;
 
 import com.example.parking_management.dto.vehicleDTO.VehicleRequest;
 import com.example.parking_management.dto.vehicleDTO.VehicleResponse;
-import com.example.parking_management.model.Vehicle;
+import com.example.parking_management.model.vehicles.Vehicle;
 import com.example.parking_management.service.VehicleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/vehicles")
-@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
+@CrossOrigin(origins = "*")
 public class VehicleController {
 
 

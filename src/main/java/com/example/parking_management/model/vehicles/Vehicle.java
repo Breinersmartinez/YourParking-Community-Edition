@@ -1,4 +1,4 @@
-package com.example.parking_management.model;
+package com.example.parking_management.model.vehicles;
 
 import com.example.parking_management.audit.Auditable;
 import jakarta.persistence.*;

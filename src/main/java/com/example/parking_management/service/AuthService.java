@@ -77,7 +77,7 @@ public class AuthService {
         msg.setTo(user.getEmail());
         msg.setSubject("¡Bienvenido al sistema de Parqueadero! "); // Asunto más claro
         msg.setText(
-                "Hola " + user.getFirstName() + user.getLastName() + ",\n\n" +
+                "Hola " + user.getFirstName() + ",\n\n" + user.getLastName() + ",\n\n" +
                         "Tu registro en el sistema de parqueadero se ha realizado con éxito.\n\n" +
                         " Fecha de registro: " + user.getRegistrationDate() + "\n" +
                         " Usuario (email): " + user.getEmail() + "\n\n" +

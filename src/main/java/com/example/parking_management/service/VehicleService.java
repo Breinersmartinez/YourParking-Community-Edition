@@ -2,7 +2,7 @@ package com.example.parking_management.service;
 
 import com.example.parking_management.dto.vehicleDTO.VehicleRequest;
 import com.example.parking_management.dto.vehicleDTO.VehicleResponse;
-import com.example.parking_management.model.Vehicle;
+import com.example.parking_management.model.vehicles.Vehicle;
 import com.example.parking_management.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

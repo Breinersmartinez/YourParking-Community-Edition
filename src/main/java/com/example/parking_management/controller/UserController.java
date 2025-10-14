@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*, https://aplicacion-de-gestion-para-parqueadero.vercel.app")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
     private final UserService userService;
