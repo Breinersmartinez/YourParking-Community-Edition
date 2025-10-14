@@ -4,8 +4,8 @@ package com.example.parking_management.service;
 import com.example.parking_management.dto.userDTO.UpdateUserRequest;
 import com.example.parking_management.dto.userDTO.UserResponse;
 
-import com.example.parking_management.model.User;
-import com.example.parking_management.model.enums.Role;
+import com.example.parking_management.model.user.User;
+import com.example.parking_management.model.user.enums.Role;
 import com.example.parking_management.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

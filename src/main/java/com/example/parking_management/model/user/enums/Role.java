@@ -1,4 +1,4 @@
-package com.example.parking_management.model.enums;
+package com.example.parking_management.model.user.enums;
 
 // Enum para roles
 public enum Role {

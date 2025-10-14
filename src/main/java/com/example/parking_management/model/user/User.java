@@ -1,11 +1,10 @@
-package com.example.parking_management.model;
+package com.example.parking_management.model.user;
 
 import com.example.parking_management.audit.Auditable;
 
-import com.example.parking_management.model.enums.IdentificationType;
-import com.example.parking_management.model.enums.Role;
+import com.example.parking_management.model.user.enums.IdentificationType;
+import com.example.parking_management.model.user.enums.Role;
 import jakarta.persistence.*;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

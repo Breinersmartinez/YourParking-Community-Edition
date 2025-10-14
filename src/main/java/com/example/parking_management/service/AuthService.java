@@ -7,7 +7,7 @@ import com.example.parking_management.dto.userDTO.RegisterRequest;
 import com.example.parking_management.jwt.JwtService;
 
 
-import com.example.parking_management.model.User;
+import com.example.parking_management.model.user.User;
 import com.example.parking_management.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Value;

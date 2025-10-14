@@ -4,8 +4,7 @@ import com.example.parking_management.dto.userDTO.UpdateUserRequest;
 import com.example.parking_management.dto.userDTO.UserResponse;
 
 
-import com.example.parking_management.model.User;
-import com.example.parking_management.model.enums.Role;
+import com.example.parking_management.model.user.enums.Role;
 import com.example.parking_management.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;

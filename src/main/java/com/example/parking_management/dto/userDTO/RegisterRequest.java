@@ -1,10 +1,8 @@
 package com.example.parking_management.dto.userDTO;
 
 
-import com.example.parking_management.model.User;
-
-import com.example.parking_management.model.enums.IdentificationType;
-import com.example.parking_management.model.enums.Role;
+import com.example.parking_management.model.user.enums.IdentificationType;
+import com.example.parking_management.model.user.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
