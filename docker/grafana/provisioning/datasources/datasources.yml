@@ -1,0 +1,25 @@
+# ============================================================
+#  Provisioning automático de datasources en Grafana
+#  Se crean al primer arranque sin configuración manual.
+# ============================================================
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "10s"
+      httpMethod: POST
+
+  - name: Graphite
+    type: graphite
+    access: proxy
+    url: http://graphite:80
+    editable: false
+    jsonData:
+      graphiteType: default
+      graphiteVersion: "1.1"
