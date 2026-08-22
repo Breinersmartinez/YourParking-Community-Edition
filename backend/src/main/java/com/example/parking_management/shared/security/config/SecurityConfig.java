@@ -65,7 +65,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/api/auth/**" //  endpoints públicos de autenticación
+                                "/api/auth/**", //  endpoints públicos de autenticación
+                                "/actuator/health", // Health check público
+                                "/actuator/prometheus" // Métricas para Prometheus
                         ).permitAll()
 
                         .anyRequest().authenticated() // Todo lo demás requiere autenticación
