@@ -1,0 +1,61 @@
+name: CodeQL
+
+on:
+  push:
+    branches: ["main", "develop*"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Análisis CodeQL (Java)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17 con cache de Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Inicializar CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java-kotlin
+          queries: security-extended
+
+      - name: Compilar backend
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -B -ntp clean compile -DskipTests
+        env:
+          URL_DB: jdbc:postgresql://localhost:5432/dummy
+          USER_NAME: dummy
+          PASSWORD_DB: dummy
+          TOKEN_JWT: dummy-jwt-secret-para-ci-de-al-menos-32-chars
+          USER_NAME_MAIL: ci@example.com
+          APP_PASSWORD: dummy-password
+          ACCESS_TOKEN: dummy-token
+
+      - name: Analizar código
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java-kotlin"
