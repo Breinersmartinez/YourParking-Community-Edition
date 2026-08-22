@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop*", "feature/**"]
+  pull_request:
+    branches: ["main", "develop*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Maven verify)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: parking_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d parking_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17 con cache de Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Ejecutar tests
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -B -ntp verify
+        env:
+          URL_DB: jdbc:postgresql://localhost:5432/parking_test
+          USER_NAME: test
+          PASSWORD_DB: test
+          TOKEN_JWT: dummy-jwt-secret-para-ci-de-al-menos-32-chars
+          USER_NAME_MAIL: ci@example.com
+          APP_PASSWORD: dummy-password
+          ACCESS_TOKEN: dummy-token
+
+      - name: Subir reporte de cobertura JaCoCo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: backend/target/site/jacoco/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  lint:
+    name: Lint (YAML + Compose)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar archivos YAML
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .yamllint
+          strict: false
+
+      - name: Validar docker-compose.yml
+        run: docker compose config --quiet && echo "compose OK"

@@ -1,5 +1,9 @@
 # Parking Management API
 
+[![CI](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/ci.yml/badge.svg)](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/ci.yml)
+[![Docker Image](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/docker-image.yml)
+[![CodeQL](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/codeql.yml/badge.svg)](https://github.com/Breinersmartinez/YourParking-Community-Edition/actions/workflows/codeql.yml)
+
 Parking Management API is a RESTful system developed with **Spring Boot 3.4.3** for managing parking facilities.  
 It includes JWT authentication, user management (administrators and clients), vehicle registration, reservations, ticket generation, and payment processing.
 
