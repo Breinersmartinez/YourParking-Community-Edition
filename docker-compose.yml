@@ -1,4 +1,4 @@
-# ============================================================
+
 #  YourParking - Community Edition
 #  Stack: Backend + PostgreSQL + Prometheus + Grafana + Graphite
 #
@@ -12,7 +12,7 @@
 #    Prometheus  -> http://localhost:9090
 #    Grafana     -> http://localhost:3000 (admin / ${GRAFANA_ADMIN_PASSWORD})
 #    Graphite UI -> http://localhost:8282
-# ============================================================
+
 
 name: yourparking
 
