@@ -10,4 +10,5 @@ class ParkingManagementApplicationTests {
 	void contextLoads() {
 	}
 
+
 }
