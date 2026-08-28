@@ -1,0 +1,67 @@
+name: Security — Dependencias y Escaneo
+
+# Puerta de seguridad del pipeline:
+#   - dependency-review: bloquea PRs con dependencias vulnerables/licencias no permitidas.
+#   - Trivy: escaneo periódico del repositorio (SAST de dependencias/secretos/IaC).
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 6 * * 1" # lunes 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write # comentario/estado en PRs (dependency-review)
+  security-events: write # subir SARIF de Trivy
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Revisión de dependencias (PR)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Revisar dependencias
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: true
+          # Se amplía después de definir tu política de licencias:
+          # allow-licenses: Apache-2.0, MIT
+
+  trivy:
+    name: Escaneo Trivy (repositorio)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Escanear repositorio (Trivy fs)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "0" # informa sin bloquear; bloqueo real en la CD de imágenes
+
+      - name: Subir resultados (Code Scanning)
+        if: hashFiles('trivy-fs.sarif') != ''
+        uses: github/codeql-action/upload-sarif@5ba2889ada762081db2c4f32a729827dce632c7b # v3
+        with:
+          sarif_file: trivy-fs.sarif

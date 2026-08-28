@@ -1,0 +1,155 @@
+name: Deploy stack (reutilizable)
+
+# Workflow reutilizable: despliega el stack en un servidor vía SSH
+# usando docker compose con las imágenes publicadas en GHCR.
+#
+# Requiere secretos (a nivel de repositorio o del entorno en cuestión):
+#   DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT (default 22),
+#   DEPLOY_GHCR_USER, DEPLOY_GHCR_PAT (si el repo GHCR es privado)
+#   y opcionalmente URL_DB, USER_NAME, PASSWORD_DB, TOKEN_JWT,
+#   USER_NAME_MAIL, APP_PASSWORD, ACCESS_TOKEN.
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Nombre del entorno GitHub (protecciones y secretos)"
+        type: string
+        required: true
+      image_tag:
+        description: "Etiqueta de la imagen (develop | latest | vX.Y.Z)"
+        type: string
+        required: true
+      app_url:
+        description: "URL pública de la aplicación (se muestra en Actions)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy -> ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.app_url }}
+    concurrency:
+      group: deploy-stack-${{ inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+
+      - name: Validar credenciales de despliegue
+        run: |
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_SSH_KEY" ]; then
+            echo "::error::Faltan los secretos DEPLOY_HOST / DEPLOY_SSH_KEY del entorno '${{ inputs.environment }}'."
+            exit 1
+          fi
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Preparar clave SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+
+      - name: Crear directorio remoto y subir el stack
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=no "$USER@$HOST" \
+            "mkdir -p ~/yourparking"
+          scp -i ~/.ssh/deploy_key -P "$PORT" -o StrictHostKeyChecking=no \
+            docker-compose.yml docker-compose.prod.yml \
+            "$USER@$HOST:~/yourparking/"
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+
+      - name: Generar .env de la aplicación en el servidor
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=no "$USER@$HOST" bash -s <<'REMOTE'
+            cat > ~/yourparking/.env <<EOF
+            URL_DB="$URL_DB"
+            USER_NAME="$USER_NAME"
+            PASSWORD_DB="$PASSWORD_DB"
+            TOKEN_JWT="$TOKEN_JWT"
+            USER_NAME_MAIL="$USER_NAME_MAIL"
+            APP_PASSWORD="$APP_PASSWORD"
+            ACCESS_TOKEN="$ACCESS_TOKEN"
+            REGISTRY_IMAGE=ghcr.io/${{ github.repository }}
+            IMAGE_TAG=${{ inputs.image_tag }}
+            GHCR_USER=$GHCR_USER
+            GHCR_PAT=$GHCR_PAT
+            EOF
+            chmod 600 ~/yourparking/.env
+          REMOTE
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+          URL_DB: ${{ secrets.URL_DB }}
+          USER_NAME: ${{ secrets.USER_NAME }}
+          PASSWORD_DB: ${{ secrets.PASSWORD_DB }}
+          TOKEN_JWT: ${{ secrets.TOKEN_JWT }}
+          USER_NAME_MAIL: ${{ secrets.USER_NAME_MAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GHCR_USER: ${{ secrets.DEPLOY_GHCR_USER }}
+          GHCR_PAT: ${{ secrets.DEPLOY_GHCR_PAT }}
+
+      - name: Pull de imágenes y levantar el stack
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=no "$USER@$HOST" bash -s <<'REMOTE'
+            set -e
+            cd ~/yourparking || exit 1
+            # Login a GHCR solo si está configurado (repos privados).
+            eval "$(grep -E '^(GHCR_USER|GHCR_PAT)=' .env)"
+            if [ -n "$GHCR_PAT" ]; then
+              echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            fi
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-build --remove-orphans
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+          REMOTE
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+
+      - name: Smoke test del backend (healthcheck)
+        run: |
+          ok=0
+          for i in $(seq 1 18); do
+            if ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=no "$USER@$HOST" \
+                'curl -fsS -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health' 2>/dev/null \
+                | grep -q 200; then
+              echo "Backend saludable (HTTP 200)"
+              ok=1
+              break
+            fi
+            echo "Tras $((i * 10))s aún sin respuesta; reintentando..."
+            sleep 10
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::El backend no quedó saludable tras la espera."
+            ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=no "$USER@$HOST" \
+              'docker compose -f ~/yourparking/docker-compose.yml logs --tail=60 backend' || true
+            exit 1
+          fi
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT || '22' }}
