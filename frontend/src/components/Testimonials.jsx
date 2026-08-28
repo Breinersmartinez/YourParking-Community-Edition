@@ -2,28 +2,27 @@ import { testimonials } from "../constants";
 
 const Testimonials = () => {
   return (
-    <div className="mt-20 tracking-wide">
-      <h2 className="text-3xl sm:text-5xl lg:text-6xl text-center my-10 lg:my-20">
-      <section id="Opiniones"> 
+    <div className="mt-20 tracking-wide" id="Opiniones">
+      <h2 className="my-10 text-center text-3xl sm:text-5xl lg:my-20 lg:text-6xl">
         Opiniones
-        </section> 
       </h2>
       <div className="flex flex-wrap justify-center">
         {testimonials.map((testimonial, index) => (
-          <div key={index} className="w-full sm:w-1/2 lg:w-1/3 px-4 py-2">
-            <div className="bg-neutral-900 rounded-md p-6 text-md border border-blue-800 font-thin">
-              <p>{testimonial.text}</p>
-              <div className="flex mt-8 items-start">
+          <div key={index} className="w-full px-4 py-2 sm:w-1/2 lg:w-1/3">
+            <div className="rounded-xl border border-neutral-800 bg-ink-900 p-6">
+              <div className="mb-4 text-accent-400">
+                {"★★★★★"}
+              </div>
+              <p className="text-neutral-300">{testimonial.text}</p>
+              <div className="mt-8 flex items-start">
                 <img
-                  className="w-12 h-12 mr-6 rounded-full border border-blue-300"
+                  className="mr-4 h-12 w-12 rounded-full border-2 border-primary-500"
                   src={testimonial.image}
-                  alt=""
+                  alt={testimonial.user}
                 />
                 <div>
-                  <h6>{testimonial.user}</h6>
-                  <span className="text-sm font-normal italic text-blue-600">
-                    {testimonial.company}
-                  </span>
+                  <h6 className="text-white">{testimonial.user}</h6>
+                  <span className="text-sm italic text-primary-400">{testimonial.company}</span>
                 </div>
               </div>
             </div>
