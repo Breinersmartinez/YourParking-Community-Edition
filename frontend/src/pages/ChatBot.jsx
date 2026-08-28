@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
 
@@ -25,8 +25,7 @@ function ChatBot() {
   }, [conversation]);
 
   const handleLogout = () => {
-    AuthService.logout();
-    navigate('/login');
+    AuthService.logout(navigate);
   };
 
   const handleInputChange = (e) => {
@@ -154,7 +153,7 @@ function ChatBot() {
             <h1 className="text-2xl font-bold text-gray-800">Navegación / Asistente Virtual</h1>
             <div className="flex items-center">
               <span className="mr-4 text-gray-700">
-                Bienvenido, {localStorage.getItem('name')}
+                Bienvenido, {AuthService.getFullName()}
               </span>
               <button 
                 onClick={handleLogout}

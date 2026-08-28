@@ -1,28 +1,59 @@
+const SESSION_KEYS = {
+  token: 'token',
+  email: 'email',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  role: 'role',
+  idCard: 'idCard',
+};
+
 class AuthService {
-  static login(token, email, name, role) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('email', email);
-    localStorage.setItem('name', name);
-    localStorage.setItem('role', role);
-  }
-
-  static logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('name');
-    localStorage.removeItem('role');
-  }
-
-  static isAuthenticated() {
-    return !!localStorage.getItem('token');
+  static login({ token, email, firstName, lastName, role }) {
+    this.clear();
+    if (token) localStorage.setItem(SESSION_KEYS.token, token);
+    if (email) localStorage.setItem(SESSION_KEYS.email, email);
+    if (firstName) localStorage.setItem(SESSION_KEYS.firstName, firstName);
+    if (lastName) localStorage.setItem(SESSION_KEYS.lastName, lastName);
+    if (role) localStorage.setItem(SESSION_KEYS.role, role);
   }
 
   static getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem(SESSION_KEYS.token);
+  }
+
+  static getEmail() {
+    return localStorage.getItem(SESSION_KEYS.email);
+  }
+
+  static getFirstName() {
+    return localStorage.getItem(SESSION_KEYS.firstName);
+  }
+
+  static getLastName() {
+    return localStorage.getItem(SESSION_KEYS.lastName);
   }
 
   static getRole() {
-    return localStorage.getItem('role');
+    return localStorage.getItem(SESSION_KEYS.role);
+  }
+
+  static getUserIdCard() {
+    const value = localStorage.getItem(SESSION_KEYS.idCard);
+    return value ? Number(value) : null;
+  }
+
+  static setUserIdCard(idCard) {
+    if (idCard != null) localStorage.setItem(SESSION_KEYS.idCard, idCard);
+  }
+
+  static getFullName() {
+    const first = this.getFirstName() || '';
+    const last = this.getLastName() || '';
+    return `${first} ${last}`.trim() || 'Usuario';
+  }
+
+  static isAuthenticated() {
+    return !!this.getToken();
   }
 
   static isAdmin() {
@@ -33,18 +64,30 @@ class AuthService {
     return this.getRole() === 'USER';
   }
 
+  static isStaff() {
+    const role = this.getRole();
+    return ['ADMIN', 'OPERATOR', 'SUPERVISOR', 'VIGILANTE'].includes(role);
+  }
+
   static getAuthHeaders() {
-    const token = this.getToken();
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${this.getToken()}`,
     };
+  }
+
+  static clear() {
+    Object.values(SESSION_KEYS).forEach((key) => localStorage.removeItem(key));
+  }
+
+  static logout(navigate) {
+    this.clear();
+    if (navigate) navigate('/login');
   }
 
   static handleResponseError(response, navigate) {
     if (response.status === 401 || response.status === 403) {
-      this.logout();
-      navigate('/login');
+      this.logout(navigate);
       return true;
     }
     return false;
