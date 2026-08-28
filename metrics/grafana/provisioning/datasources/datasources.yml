@@ -1,0 +1,17 @@
+# =====================================================================
+#  YourParking - Datasource de Grafana
+#  Registra el Prometheus del stack como fuente de datos por defecto.
+# =====================================================================
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    # "prometheus" es el nombre del servicio/servicio del compose.
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "15s"

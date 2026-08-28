@@ -1,0 +1,19 @@
+# =====================================================================
+#  YourParking - Provisioning de Dashboards de Grafana
+#  Carga automáticamente los dashboards JSON del directorio compartido.
+# =====================================================================
+
+apiVersion: 1
+
+providers:
+  - name: "YourParking"
+    orgId: 1
+    folder: "YourParking"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      # Directorio montado desde ./grafana/dashboards en el compose.
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false
