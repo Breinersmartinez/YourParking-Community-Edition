@@ -1,0 +1,42 @@
+# =====================================================================
+#  YourParking - Reglas de alerta (opcionales)
+#  Generan alertas "Pending"/"Firing" consultables en Prometheus.
+#  Para recibirlas por email/Slack etc. configura un Alertmanager.
+# =====================================================================
+
+groups:
+  - name: yourparking-backend
+    rules:
+      # El backend no está exponiendo métricas (probablemente caído).
+      - alert: BackendDown
+        expr: up{job="yourparking-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "El backend YourParking no responde"
+          description: "Prometheus no puede hacer scraping de {{ $labels.instance }} desde hace más de 1 minuto."
+
+      # Alta utilización / error en los endpoints HTTP expuestos.
+      - alert: HighHttpErrorRate
+        expr: |
+          sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m])) by (uri)
+          / sum(rate(http_server_requests_seconds_count[5m])) by (uri) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tasa de errores 5xx elevada"
+          description: "El endpoint {{ $labels.uri }} supera el 5% de errores HTTP en 5 minutos."
+
+      # El heap de la JVM del backend supera el 85% (posible presión de memoria).
+      - alert: HighJvmHeapUsage
+        expr: |
+          sum(jvm_memory_used_bytes{area="heap"}) by (instance)
+          / sum(jvm_memory_max_bytes{area="heap"}) by (instance) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Uso de heap JVM alto"
+          description: "El heap de {{ $labels.instance }} supera el 85% de su máximo."
