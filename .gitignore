@@ -2,6 +2,8 @@
 Credentials
 .env
 *.env
+/.env
+/backend/.env
 !/*.env.example
 parking-management-api.env
 .env.local
