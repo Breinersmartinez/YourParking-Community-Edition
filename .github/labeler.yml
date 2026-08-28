@@ -1,0 +1,27 @@
+# Etiquetas automáticas por rutas modificadas (actions/labeler v5).
+# Crea previamente las labels en el repositorio (Settings > Labels).
+
+backend:
+  - backend/**
+
+frontend:
+  - frontend/**
+
+docs:
+  - docs/**/*
+  - "**/*.md"
+
+ci:
+  - .github/workflows/*
+  - .github/dependabot.yml
+
+docker:
+  - "**/Dockerfile*"
+  - "**/.dockerignore"
+  - "docker-compose*.yml"
+
+database:
+  - db/**
+
+metrics:
+  - metrics/**

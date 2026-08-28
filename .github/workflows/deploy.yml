@@ -1,0 +1,71 @@
+name: CD — Despliegue
+
+# Orquestador de despliegues. Delega el trabajo al workflow reutilizable
+# "deploy-stack.yml" con el entorno y la etiqueta de imagen adecuados.
+#
+#   - push a develop        -> entorno "dev"        (imagen tag: develop)
+#   - tags v*               -> entorno "prod"       (imagen tag: vX.Y.Z)
+#   - workflow_dispatch     -> eliges entorno
+#
+# Secretos (repo o por entorno, ver deploy-stack.yml):
+#   DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT,
+#   DEPLOY_GHCR_USER, DEPLOY_GHCR_PAT, URL_DB, USER_NAME, PASSWORD_DB,
+#   TOKEN_JWT, USER_NAME_MAIL, APP_PASSWORD, ACCESS_TOKEN
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "db/**"
+      - "docker-compose*.yml"
+      - ".github/workflows/deploy*.yml"
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Entorno de despliegue"
+        type: choice
+        options: [dev, staging, prod]
+        default: dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-dev:
+    name: Deploy a dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    uses: ./.github/workflows/deploy-stack.yml
+    with:
+      environment: dev
+      image_tag: develop
+      app_url: "https://dev.yourparking.example"
+    secrets: inherit
+
+  deploy-staging:
+    name: Deploy a staging
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'staging'
+    uses: ./.github/workflows/deploy-stack.yml
+    with:
+      environment: staging
+      image_tag: develop
+      app_url: "https://staging.yourparking.example"
+    secrets: inherit
+
+  deploy-prod:
+    name: Deploy a prod
+    if: >
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')
+    uses: ./.github/workflows/deploy-stack.yml
+    with:
+      environment: prod
+      image_tag: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
+      app_url: "https://yourparking.example"
+    secrets: inherit
