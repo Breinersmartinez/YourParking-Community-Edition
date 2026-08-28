@@ -4,6 +4,7 @@ import com.example.parking_management.audit.Auditable;
 
 import com.example.parking_management.model.user.enums.IdentificationType;
 import com.example.parking_management.model.user.enums.Role;
+import com.example.parking_management.model.vehicles.Vehicle;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -55,6 +56,9 @@ public class User extends Auditable<User> implements UserDetails {
 
     @Column(name = "ACTIVO")
     private Boolean active = true;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vehicle> vehicles = new java.util.ArrayList<>();
 
     public User(Integer idCard, IdentificationType identificationType, String firstName, String lastName, String password, String email, String phoneNumber, String direction, LocalDateTime registrationDate, Role role, Boolean active) {
         this.idCard = idCard;
@@ -198,6 +202,14 @@ public class User extends Auditable<User> implements UserDetails {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 
 
