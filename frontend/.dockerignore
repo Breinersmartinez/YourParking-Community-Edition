@@ -1,0 +1,23 @@
+# Dependencias locales (se instalan con npm ci dentro de la imagen)
+node_modules/
+
+# Artefactos de build local
+dist/
+
+# Credenciales y configuración local
+.env
+*.env
+!.env.example
+
+# Control de versiones
+.git/
+.gitignore
+.github/
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+*.log
+npm-debug.log*

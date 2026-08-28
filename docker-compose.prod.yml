@@ -1,0 +1,23 @@
+# =====================================================================
+#  YourParking - Override de despliegue en servidores (producción).
+#  Usa las imágenes publicadas en GHCR en lugar de construir en el host.
+#
+#  Uso:
+#    docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+#    docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-build
+#
+#  Variables de entorno esperadas (archivo ".env" en el servidor):
+#    REGISTRY_IMAGE = ghcr.io/<owner>/<repo>
+#    IMAGE_TAG      = develop | latest | vX.Y.Z
+# =====================================================================
+
+name: yourparking
+
+services:
+  backend:
+    image: ${REGISTRY_IMAGE}/backend:${IMAGE_TAG:-latest}
+    pull_policy: always
+
+  frontend:
+    image: ${REGISTRY_IMAGE}/frontend:${IMAGE_TAG:-latest}
+    pull_policy: always
