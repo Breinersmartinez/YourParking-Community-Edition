@@ -1,4 +1,4 @@
-# YourParking — Community Edition 🅿️
+# YourParking — Community Edition 
 
 Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST** (Spring Boot) y una **aplicación web** (React + Vite) con una interfaz de administración completa y un portal para clientes.
 
@@ -13,7 +13,7 @@ Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST**
 
 ---
 
-## ✨ Características
+##  Características
 
 - **Autenticación y roles**: Spring Security + JWT con roles (`ADMIN`, `OPERATOR`, `SUPERVISOR`, `VIGILANTE`, `USER`). Contraseñas cifradas con BCrypt.
 - **Gestión del parqueadero**: niveles, zonas, espacios, vehículos, tickets de entrada/salida, reservas e incidentes.
@@ -26,7 +26,7 @@ Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST**
 
 ---
 
-## 🏗️ Estructura del monorepo
+##  Estructura del monorepo
 
 ```
 .
@@ -39,7 +39,7 @@ Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST**
 
 ---
 
-## 📚 Documentación
+##  Documentación
 
 Toda la documentación está en [`docs/`](./docs/README.md):
 
@@ -56,7 +56,7 @@ Toda la documentación está en [`docs/`](./docs/README.md):
 
 ---
 
-## 🚀 Inicio rápido
+##  Inicio rápido
 
 ### Requisitos previos
 
@@ -86,7 +86,7 @@ npm run dev
 
 ---
 
-## 🔐 Variables de entorno
+##  Variables de entorno
 
 ### Backend (`docs/BACKEND.md`)
 
@@ -107,11 +107,11 @@ npm run dev
 | `VITE_API_URL` | URL base de la API (`http://localhost:8080` en local) |
 | `VITE_API_BREINLOGIC_URL` | Endpoint del ChatBot (opcional) |
 
-> ⚠️ **Seguridad:** las credenciales reales viven en archivos `.env` **ignorados por git**. Nunca las subas al repositorio; si se filtran, rótalas.
+>  **Seguridad:** las credenciales reales viven en archivos `.env` **ignorados por git**. Nunca las subas al repositorio; si se filtran, rótalas.
 
 ---
 
-## 🐳 Docker
+##  Docker
 
 ```bash
 cd backend
@@ -123,7 +123,7 @@ El CI [`.github/workflows/docker-image.yml`](./.github/workflows/docker-image.ym
 
 ---
 
-## 🧰 Tecnologías
+##  Tecnologías
 
 **Backend:** Spring Boot 3.4.3 · Spring Security + JWT · Spring Data JPA · PostgreSQL · SpringDoc OpenAPI · Lombok · Mercado Pago SDK · JavaMail.
 
@@ -131,7 +131,7 @@ El CI [`.github/workflows/docker-image.yml`](./.github/workflows/docker-image.ym
 
 ---
 
-## 👤 Autor
+##  Autor
 
 **Breiner Martínez**
 
@@ -140,6 +140,6 @@ El CI [`.github/workflows/docker-image.yml`](./.github/workflows/docker-image.ym
 
 ---
 
-## 📄 Licencia
+##  Licencia
 
 MIT License.
