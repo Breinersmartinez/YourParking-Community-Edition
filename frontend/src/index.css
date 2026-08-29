@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Poppins", sans-serif;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-950 text-neutral-100 antialiased;
+  }
+}
+
+@layer components {
+  /* ---- Botones ---- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-offset-ink-950;
+  }
+  .btn-outline {
+    @apply btn border border-neutral-600 text-neutral-100 hover:bg-neutral-800;
+  }
+  .btn-ghost {
+    @apply btn text-neutral-300 hover:bg-neutral-800 hover:text-white;
+  }
+  .btn-success {
+    @apply btn bg-success-600 text-white hover:bg-success-700;
+  }
+  .btn-danger {
+    @apply btn bg-danger-600 text-white hover:bg-danger-700;
+  }
+  .btn-blue {
+    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  /* ---- Inputs ---- */
+  .input {
+    @apply w-full rounded-lg border border-neutral-700 bg-ink-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 transition-colors focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-neutral-300;
+  }
+  .select {
+    @apply input cursor-pointer appearance-none;
+  }
+
+  /* ---- Cards ---- */
+  .card {
+    @apply rounded-xl border border-neutral-800 bg-ink-900 shadow-card;
+  }
+  .card-header {
+    @apply border-b border-neutral-800 px-5 py-4;
+  }
+
+  /* ---- Badges de estado ---- */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .badge-orange {
+    @apply badge bg-primary-500/15 text-primary-400;
+  }
+  .badge-yellow {
+    @apply badge bg-accent-400/15 text-accent-300;
+  }
+  .badge-green {
+    @apply badge bg-success-500/15 text-success-500;
+  }
+  .badge-red {
+    @apply badge bg-danger-500/15 text-danger-500;
+  }
+  .badge-gray {
+    @apply badge bg-neutral-700/50 text-neutral-300;
+  }
+  .badge-blue {
+    @apply badge bg-blue-500/15 text-blue-400;
+  }
+
+  /* ---- Tablas ---- */
+  .table {
+    @apply w-full text-sm;
+  }
+  .table thead th {
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400;
+  }
+  .table tbody td {
+    @apply px-4 py-3 text-neutral-200;
+  }
+  .table tbody tr {
+    @apply border-t border-neutral-800 transition-colors hover:bg-ink-850;
+  }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0a09;
+}
+::-webkit-scrollbar-thumb {
+  background: #44403c;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f97316;
+}

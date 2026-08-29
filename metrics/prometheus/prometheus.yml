@@ -1,0 +1,36 @@
+# =====================================================================
+#  YourParking - Configuración de Prometheus
+#  Almacena en TSDB las métricas expuestas por el backend Spring Boot
+#  en /actuator/prometheus y sirve como fuente de datos para Grafana.
+# =====================================================================
+
+global:
+  scrape_interval: 15s      # cada cuánto se recopila
+  evaluation_interval: 15s  # cada cuánto se evalúan reglas/alertas
+  scrape_timeout: 10s
+
+# Reglas de alerta opcionales (comenta si no tienes el archivo).
+rule_files:
+  - "alerting-rules.yml"
+
+scrape_configs:
+  # ---------------------------------------------------------------
+  # Métricas del backend YourParking (Actuator + Micrometer).
+  # Ajusta "targets" según la ubicación real de tu backend:
+  #   - Si corre localmente sin contenedor : "host.docker.internal:8080"
+  #   - Si corre en un contenedor : el alias de red, p. ej. "backend:8080"
+  # ---------------------------------------------------------------
+  - job_name: "yourparking-backend"
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "host.docker.internal:8080"
+
+  # ---------------------------------------------------------------
+  # Auto-monitoreo de Prometheus (opcional, útil para validar el stack).
+  # ---------------------------------------------------------------
+  - job_name: "prometheus"
+    static_configs:
+      - targets:
+          - "localhost:9090"

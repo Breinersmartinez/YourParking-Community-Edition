@@ -1,0 +1,50 @@
+# Conguratios of application
+
+
+## Configuracio para la conexion de la db 
+spring.datasource.url=${URL_DB}
+spring.datasource.username=${USER_NAME}
+spring.datasource.password=${PASSWORD_DB}
+spring.application.name=parking-management-api
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.show-sql=true
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+
+
+
+## JWT Configuration
+# IMPORTANTE: Genera una clave secreta segura (mínimo 256 bits)
+# Puedes usar: openssl rand -base64 32
+jwt.secret.key=${TOKEN_JWT}
+jwt.expiration.time=86400000
+
+## Puerto del servidor
+```
+server.port=8080
+```
+
+
+## Configuracion para el manejo de emails 
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=${USER_NAME_MAIL}
+spring.mail.password=${APP_PASSWORD}
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+
+
+
+## Configuracion mercado pago 
+meli.accesToken=${ACCESS_TOKEN}
+mercado.pago.url.base=https://api.mercadopago.com/v1/payments/
+
+
+
+## Documentacion swagger 
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.operationsSorter=method

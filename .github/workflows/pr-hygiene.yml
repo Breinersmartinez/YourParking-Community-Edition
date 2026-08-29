@@ -1,0 +1,64 @@
+name: PR — Higiene
+
+# Estándares de calidad sobre los Pull Requests:
+#   - Título con Conventional Commits (semántico).
+#   - Etiquetado automático por rutas modificadas.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: pr-hygiene-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  title:
+    name: Título semántico (Conventional Commits)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar título del PR
+        uses: amannn/action-semantic-pull-request@e32d7e603df1aa1ba07e981f2a23455dee596825 # v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            perf
+            refactor
+            test
+            build
+            ci
+            chore
+            docs
+            style
+            revert
+          scopes: |
+            backend
+            frontend
+            docs
+            ci
+            docker
+            db
+            metrics
+            release
+          requireScope: false
+          subjectPattern: ^[A-Za-z0-9\-\s]{1,100}$
+          subjectPatternError: >-
+            El "subject" del título debe ser breve (máx. 100 caracteres).
+
+  labels:
+    name: Etiquetado automático
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aplicar labels por paths
+        uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          sync-labels: true

@@ -1,0 +1,127 @@
+name: CI — Build & Test
+
+# Integración continua: compila, ejecuta tests y genera artefactos
+# del backend (Spring Boot) y del frontend (React) en cada PR y push
+# a las ramas estables.
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: "17"
+  NODE_VERSION: "20"
+
+jobs:
+  backend:
+    name: Backend · compilar y testear (Java 17)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Compilar y ejecutar tests (Maven wrapper)
+        working-directory: backend
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B --no-transfer-progress verify
+
+      - name: Publicar artefactos de tests (si fallan)
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: backend-test-reports
+          path: |
+            backend/target/surefire-reports/
+            backend/target/jacoco-report/
+          retention-days: 7
+
+  frontend:
+    name: Frontend · lint y build (Node 20)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Configurar Node 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias (lockfile)
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint (ESLint)
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Auditoría de dependencias (npm audit)
+        working-directory: frontend
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Build de producción
+        working-directory: frontend
+        run: npm run build
+
+      - name: Publicar artefacto (dist/)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+
+  required:
+    name: Estado de CI
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [backend, frontend]
+    steps:
+      # Puerta única de CI para usar como "Required status check"
+      # en las protecciones de rama. Los trabajos "skipped" (por filtros
+      # de paths) se consideran OK.
+      - name: Verificar resultado de trabajos
+        run: |
+          echo "backend=${{ needs.backend.result }}"
+          echo "frontend=${{ needs.frontend.result }}"
+          for r in "${{ needs.backend.result }}" "${{ needs.frontend.result }}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "CI falló (resultado: $r)"; exit 1 ;;
+            esac
+          done

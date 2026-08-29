@@ -1,0 +1,152 @@
+# =====================================================================
+#  YourParking - Community Edition
+#  Stack completo del proyecto: PostgreSQL + Backend + Frontend + Métricas.
+#
+#  Uso (ver Makefile):
+#    make up          # levanta todo el stack en segundo plano
+#    make up --build  o  make build && make up
+#    make logs SVC=backend
+#    make down        # detiene (conserva los volúmenes de datos)
+#    make clean       # detiene y borra los volúmenes (pierdes los datos)
+#
+#  Configuración opcional vía archivo ".env" en la raíz del repo
+#  (ver ".env.example"). Sin ".env", el stack se levanta en local
+#  con los valores por defecto (base de datos PostgreSQL local).
+# =====================================================================
+
+name: yourparking
+
+services:
+  # ---------------------------------------------------------------
+  # Base de datos PostgreSQL (opcional cuando usas un DB externo).
+  # El script db/parking_management.sql se aplica en el primer arranque.
+  # ---------------------------------------------------------------
+  db:
+    image: postgres:17-alpine
+    container_name: yp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-parking_management}
+      POSTGRES_USER: ${POSTGRES_USER:-parking}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-parking123}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/parking_management.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-parking} -d ${POSTGRES_DB:-parking_management}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - yp-net
+
+  # ---------------------------------------------------------------
+  # API Backend (Spring Boot, Java 17).
+  # Para apuntar a un DB externo (p. ej. Neon) define en ".env":
+  #   URL_DB, USER_NAME, PASSWORD_DB
+  # ---------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+    container_name: yp-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Por defecto usa la PostgreSQL local del compose.
+      URL_DB: ${URL_DB:-jdbc:postgresql://db:5432/parking_management?sslmode=disable}
+      USER_NAME: ${USER_NAME:-parking}
+      PASSWORD_DB: ${PASSWORD_DB:-parking123}
+      # TOKEN_JWT aquí es SOLO para desarrollo; en producción pásalo por ".env".
+      TOKEN_JWT: ${TOKEN_JWT:-solo-desarrollo-token-jwt-reemplazar-por-variable-TOKEN_JWT}
+      # Correo y pagos son opcionales: se activan al definir sus credenciales.
+      USER_NAME_MAIL: ${USER_NAME_MAIL:-}
+      APP_PASSWORD: ${APP_PASSWORD:-}
+      ACCESS_TOKEN: ${ACCESS_TOKEN:-}
+      PORT: 8080
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - yp-net
+
+  # ---------------------------------------------------------------
+  # Frontend (React + Vite servido por Nginx).
+  # El navegador consume la API en VITE_API_URL (default localhost:8080).
+  # ---------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    container_name: yp-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    networks:
+      - yp-net
+
+  # ---------------------------------------------------------------
+  # Observabilidad: Prometheus recolecta las métricas del backend.
+  # ---------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: yp-prometheus
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./metrics/prometheus/prometheus.compose.yml:/etc/prometheus/prometheus.yml:ro
+      - ./metrics/prometheus/alerting-rules.yml:/etc/prometheus/alerting-rules.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+    networks:
+      - yp-net
+
+  # ---------------------------------------------------------------
+  # Observabilidad: Grafana (dashboard "YourParking - Métricas del Backend").
+  # ---------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: yp-grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    volumes:
+      - ./metrics/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./metrics/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - yp-net
+
+volumes:
+  db-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  yp-net:
+    driver: bridge

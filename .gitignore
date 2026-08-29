@@ -1,1 +1,41 @@
+# Credenciales
 Credentials
+.env
+*.env
+/.env
+/backend/.env
+!/*.env.example
+parking-management-api.env
+.env.local
+.env.*.local
+
+# Build (Maven)
+target/
+**/target/
+**/target/**
+backend/target/
+
+# IDE - IntelliJ
+.idea/
+**/.idea/
+**/.idea/**
+*.iml
+*.ipr
+*.iws
+
+# IDE - VSCode / otros
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos subidos
+uploads/
