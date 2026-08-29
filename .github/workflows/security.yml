@@ -57,6 +57,7 @@ jobs:
           format: sarif
           output: trivy-fs.sarif
           severity: CRITICAL,HIGH
+          limit-severities-for-sarif: true
           ignore-unfixed: true
           exit-code: "0" # informa sin bloquear; bloqueo real en la CD de imágenes
 

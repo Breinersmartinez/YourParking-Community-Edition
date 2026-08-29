@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.14</version>
+		<version>3.5.15</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -37,8 +37,12 @@
 		<spring-framework.version>6.2.19</spring-framework.version>
 		<spring-data-bom.version>2025.0.12</spring-data-bom.version>
 		<micrometer.version>1.15.12</micrometer.version>
-		<jackson-bom.version>2.21.4</jackson-bom.version>
+		<jackson-bom.version>2.21.5</jackson-bom.version>
 		<postgresql.version>42.7.12</postgresql.version>
+		<logback.version>1.5.34</logback.version>
+		<log4j2.version>2.25.5</log4j2.version>
+		<spring-security.version>6.5.11</spring-security.version>
+		<commons-lang3.version>3.18.0</commons-lang3.version>
 	</properties>
 	<dependencies>
 
