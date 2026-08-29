@@ -11,9 +11,14 @@ parking-management-api.env
 
 # Build (Maven)
 target/
+**/target/
+**/target/**
+backend/target/
 
 # IDE - IntelliJ
 .idea/
+**/.idea/
+**/.idea/**
 *.iml
 *.ipr
 *.iws
