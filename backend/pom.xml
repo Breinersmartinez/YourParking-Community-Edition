@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.12</version>
+		<version>3.5.14</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -28,6 +28,17 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+
+		<!--
+			Sobrescrituras de versiones del BOM de Spring Boot para mitigar
+			vulnerabilidades (CVE) reportadas por Trivy en dependencias transitivas.
+		-->
+		<tomcat.version>10.1.55</tomcat.version>
+		<spring-framework.version>6.2.19</spring-framework.version>
+		<spring-data-bom.version>2025.0.12</spring-data-bom.version>
+		<micrometer.version>1.15.12</micrometer.version>
+		<jackson-bom.version>2.21.4</jackson-bom.version>
+		<postgresql.version>42.7.12</postgresql.version>
 	</properties>
 	<dependencies>
 
@@ -111,6 +122,18 @@
 			<groupId>com.mercadopago</groupId>
 			<artifactId>sdk-java</artifactId>
 			<version>2.1.7</version>
+			<exclusions>
+				<!--
+					El SDK de Mercado Pago declara maven-javadoc-plugin como dependencia
+					de compilación, arrastrando librerías viejas y vulnerables (maven-core,
+					commons-text, plexus, commons-io, commons-beanutils). Se excluyen porque
+					son herramientas de build, no de runtime de la aplicación.
+				-->
+				<exclusion>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Base de datos en memoria para pruebas / H2 test dependency -->
