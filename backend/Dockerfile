@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM eclipse-temurin:17-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -18,7 +18,7 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 
 # Set the working directory
 WORKDIR /app
