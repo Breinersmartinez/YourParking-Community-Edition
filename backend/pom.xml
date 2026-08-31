@@ -125,7 +125,7 @@
 		<dependency>
 			<groupId>com.mercadopago</groupId>
 			<artifactId>sdk-java</artifactId>
-			<version>2.1.7</version>
+			<version>3.7.0</version>
 			<exclusions>
 				<!--
 					El SDK de Mercado Pago declara maven-javadoc-plugin como dependencia
