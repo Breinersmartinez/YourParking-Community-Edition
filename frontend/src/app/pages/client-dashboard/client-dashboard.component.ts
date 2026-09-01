@@ -15,7 +15,7 @@ import { SpinnerComponent } from '../../shared/ui/spinner.component';
   standalone: true,
   imports: [FormsModule, BadgeComponent, ModalComponent, SpinnerComponent],
   template: `
-    @if (idCard == null) {
+    @if (idCard === null) {
       <div class="card p-8 text-center">
         <p class="text-neutral-400">No se pudo identificar su cuenta. Vuelva a iniciar sesión.</p>
       </div>
