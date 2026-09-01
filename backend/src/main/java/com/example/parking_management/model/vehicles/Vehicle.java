@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "VEHICULO")
-public class Vehicle extends Auditable<Vehicle> {
+public class Vehicle extends Auditable {
 
     @Id
     @Column(name = "PLACA_VEHICULO")

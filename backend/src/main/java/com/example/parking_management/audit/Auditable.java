@@ -8,19 +8,21 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 
 @Getter
 @Setter
+@MappedSuperclass
 
 @EntityListeners(AuditingEntityListener.class)
-public class Auditable<U> {
+public class Auditable {
 
     @CreatedBy
     @Column(name = "CREADO_POR", updatable = false)
-    private U createdBy;
+    private String createdBy;
 
     @CreatedDate
     @Column(name = "FECHA_CREACION", updatable = false)
@@ -30,10 +32,10 @@ public class Auditable<U> {
 
     @LastModifiedBy
     @Column(name = "ULTIMA_MODIFICACION_POR")
-    private U lastModifiedBy;
+    private String lastModifiedBy;
 
-    @LastModifiedBy
-    @Column(name = "ULTIMA_MODIFICACION_Date")
+    @LastModifiedDate
+    @Column(name = "ULTIMA_MODIFICACION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 

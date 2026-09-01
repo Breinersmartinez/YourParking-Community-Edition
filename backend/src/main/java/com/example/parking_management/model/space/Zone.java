@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ZONA")
-public class Zone extends Auditable<Zone> {
+public class Zone extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

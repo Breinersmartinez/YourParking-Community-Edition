@@ -19,7 +19,7 @@ import java.util.List;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "USUARIO")
-public class User extends Auditable<User> implements UserDetails {
+public class User extends Auditable implements UserDetails {
 
     @Id
     @Column(name = "IDENTIFICACION", unique = true, nullable = false)

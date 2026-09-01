@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ESPACIO")
-public class Space extends Auditable<Space> {
+public class Space extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

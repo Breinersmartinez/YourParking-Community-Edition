@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ABONO")
-public class Subscription extends Auditable<Subscription> {
+public class Subscription extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
