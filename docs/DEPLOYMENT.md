@@ -44,16 +44,14 @@ Build de producción y previsualización:
 ```bash
 cd frontend
 npm install
-npm run build        # genera dist/
-npm run preview      # sirve dist/ localmente
+npm run build        # genera dist/parking-frontend/browser
 ```
-
-Variables del frontend (`frontend/.env`):
+Variables del frontend: en Angular no hay `.env` en runtime; la URL de la API se inyecta en el build de producción y en Docker vía el build-arg `API_URL` (`frontend/src/environments/environment.prod.ts`).
 
 | Variable | Descripción |
 | -------- | ----------- |
-| `VITE_API_URL` | URL de la API backend (producción: apuntar al backend desplegado). |
-| `VITE_API_BREINLOGIC_URL` | Endpoint del ChatBot (opcional). |
+| `API_URL` | Build-arg del frontend en Docker (producción: apuntar al backend desplegado). |
+| `breinLogicUrl` | Endpoint del ChatBot (opcional, `frontend/src/environments`). |
 
 ---
 
@@ -65,7 +63,7 @@ En la raíz del repo hay un `docker-compose.yml` que levanta **todo el proyecto*
 | -------- | -------------- | ----------------- |
 | `db` | `postgres:17-alpine` (inicializada con `db/parking_management.sql`) | `5432` |
 | `backend` | `backend/Dockerfile` (Spring Boot, Java 17) | `8080` |
-| `frontend` | `frontend/Dockerfile` (React + Vite servido con Nginx) | `3000` |
+| `frontend` | `frontend/Dockerfile` (Angular 19 servido con Nginx) | `3000` |
 | `prometheus` | `prom/prometheus` | `9090` |
 | `grafana` | `grafana/grafana` | `3001` (admin/admin) |
 
@@ -91,7 +89,7 @@ make up-metrics      # solo Prometheus + Grafana
 
 - Por defecto el stack usa la **PostgreSQL local** del compose (`parking`/`parking123`, BD `parking_management`).
 - Para apuntar a una BD externa (p. ej. Neon) o definir credenciales reales, copia `.env.example` a `.env` en la raíz del repo y ajusta `URL_DB`, `USER_NAME`, `PASSWORD_DB`, `TOKEN_JWT`, etc.
-- El frontend se construye con `VITE_API_URL` (default `http://localhost:8080`); lo cambia la variable `VITE_API_URL` del `.env` raíz.
+- El frontend se construye con el build-arg `API_URL` (default `http://localhost:8080`); lo cambia la variable `API_URL` del `.env` raíz.
 - Prometheus (config para el stack en red: `metrics/prometheus/prometheus.compose.yml`) hace scraping de `backend:8080/actuator/prometheus`.
 
 ---
@@ -142,7 +140,7 @@ En el servidor se suben `docker-compose.yml` + `docker-compose.prod.yml` (que ha
 1. Desplegar el **backend** en cualquier proveedor compatible con Docker (Render, Railway, Fly.io, un VPS, etc.) pasando las variables de entorno.
 2. Crear/actualizar la base **PostgreSQL** y apuntar `URL_DB`.
 3. Construir y servir el **frontend** como estático (Vercel, Netlify, GitHub Pages, S3 + CDN).
-4. Configurar `VITE_API_URL` del frontend apuntando al dominio del backend y habilitar el **CORS** del backend para ese dominio.
+4. Configurar `API_URL` del frontend apuntando al dominio del backend y habilitar el **CORS** del backend para ese dominio.
 
 ---
 

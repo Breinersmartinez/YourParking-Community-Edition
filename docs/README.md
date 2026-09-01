@@ -47,10 +47,10 @@ La API queda disponible en `http://localhost:8080` y la documentación Swagger e
 ```bash
 cd frontend
 npm install
-npm run dev        # servidor de desarrollo (Vite)
+npm start         # servidor de desarrollo (Angular, puerto 4200)
 ```
 
-La app abre en `http://localhost:5173` y consume la API en `http://localhost:8080` (configurable vía `VITE_API_URL`).
+La app abre en `http://localhost:4200` y consume la API en `http://localhost:8080` (configurable vía `environment.apiUrl` / build-arg `API_URL`).
 
 ---
 
@@ -63,6 +63,6 @@ La app abre en `http://localhost:5173` y consume la API en `http://localhost:808
 | `/clientSignUp` | Pública | Registro de clientes. |
 | `/portal` | Cliente (autenticado) | Dashboard del cliente: vehículos, reservas y suscripciones. |
 | `/admin` | Admin (autenticado) | Panel de administración con 10 secciones de gestión. |
-| `/chatBot` | Pública | Asistente virtual (depende de `VITE_API_BREINLOGIC_URL`). |
+| `/portal/chatbot` | Cliente (autenticado) | Asistente virtual (depende de `breinLogicUrl`). |
 
 Consulta [FRONTEND.md](./FRONTEND.md) para el detalle de rutas y [API.md](./API.md) para los endpoints, si deseas contribuir.

@@ -21,7 +21,7 @@ Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST**
 - **Pagos**: seguimiento con varios métodos e integración con **Mercado Pago**.
 - **Panel de administración**: dashboard con estadísticas en tiempo real y CRUD completo de todas las entidades.
 - **Portal del cliente**: vehículos, reservas y suscripciones.
-- **Asistente virtual**: ChatBot integrado (requiere `VITE_API_BREINLOGIC_URL`).
+- **Asistente virtual**: ChatBot integrado (requiere `breinLogicUrl`).
 - **Documentación**: Swagger UI automática y API REST completa.
 
 ---
@@ -79,10 +79,10 @@ cd backend
 ```bash
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 
-- App: `http://localhost:5173` (configurable; consume la API vía `VITE_API_URL`)
+- App: `http://localhost:4200` (dev server de Angular; consume la API vía `apiUrl`)
 
 ---
 
@@ -104,8 +104,8 @@ npm run dev
 
 | Variable | Descripción |
 | -------- | ----------- |
-| `VITE_API_URL` | URL base de la API (`http://localhost:8080` en local) |
-| `VITE_API_BREINLOGIC_URL` | Endpoint del ChatBot (opcional) |
+| `API_URL` | Build-arg del frontend en Docker: URL base de la API (`http://localhost:8080` en local) |
+| `breinLogicUrl` | Endpoint del ChatBot (opcional) |
 
 >  **Seguridad:** las credenciales reales viven en archivos `.env` **ignorados por git**. Nunca las subas al repositorio; si se filtran, rótalas.
 
