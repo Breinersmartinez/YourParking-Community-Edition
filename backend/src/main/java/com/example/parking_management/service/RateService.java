@@ -111,15 +111,34 @@ public class RateService {
         if (minutes < 1) {
             minutes = 1;
         }
-        BigDecimal cost;
-        if (rate.getPrecioHora() != null) {
-            cost = rate.getPrecioHora()
-                    .multiply(BigDecimal.valueOf(minutes))
-                    .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
-        } else {
-            cost = BigDecimal.ZERO;
+        BigDecimal cost = BigDecimal.ZERO;
+        long remaining = minutes;
+
+        if (rate.getPrecioDia() != null && remaining >= 1440) {
+            long dias = remaining / 1440;
+            cost = cost.add(rate.getPrecioDia().multiply(BigDecimal.valueOf(dias)));
+            remaining = remaining % 1440;
         }
-        return cost;
+
+        if (remaining >= 60 && rate.getPrecioHora() != null) {
+            long horas = remaining / 60;
+            cost = cost.add(rate.getPrecioHora()
+                    .multiply(BigDecimal.valueOf(horas))
+                    .setScale(2, RoundingMode.HALF_UP));
+            remaining = remaining % 60;
+        }
+
+        if (remaining > 0) {
+            if (remaining < 60 && rate.getPrecioFraccion() != null) {
+                cost = cost.add(rate.getPrecioFraccion());
+            } else if (rate.getPrecioHora() != null) {
+                cost = cost.add(rate.getPrecioHora()
+                        .multiply(BigDecimal.valueOf(remaining))
+                        .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP));
+            }
+        }
+
+        return cost.setScale(2, RoundingMode.HALF_UP);
     }
 
     private RateResponse convertToResponse(Rate rate) {

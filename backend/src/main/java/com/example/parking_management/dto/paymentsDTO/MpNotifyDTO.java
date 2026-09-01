@@ -24,6 +24,6 @@ public class MpNotifyDTO {
     public String toString() {
         return "MpNotifyDTO [id=" + id + ", liveMode=" + liveMode + ", type=" + type + ", dateCreated=" + dateCreated
                 + ", userID=" + userID + ", apiVersion=" + apiVersion + ", action=" + action + ", data="
-                + data.toString() + "]";
+                + (data != null ? data.toString() : "null") + "]";
     }
 }
