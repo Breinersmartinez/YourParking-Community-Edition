@@ -14,7 +14,7 @@ RUN sed -i "s|apiUrl: '.*'|apiUrl: '${API_URL}'|" src/environments/environment.p
 RUN npm run build:prod
 
 # Stage 2: Servir con Nginx
-FROM nginx:1.27-alpine
+FROM nginx:1.31-alpine
 
 COPY --from=build /app/dist/parking-frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
