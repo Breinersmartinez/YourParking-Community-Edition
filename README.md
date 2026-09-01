@@ -1,12 +1,11 @@
 # YourParking — Community Edition 
 
-Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST** (Spring Boot) y una **aplicación web** (React + Vite) con una interfaz de administración completa y un portal para clientes.
+Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST** (Spring Boot) y una **aplicación web** (Angular 19) con una interfaz de administración completa y un portal para clientes.
 
 <a href="#">
   <img alt="Spring Boot" src="https://img.shields.io/badge/Spring%20Boot-3.4.3-6DB33F?logo=spring&logoColor=white" />
   <img alt="Java" src="https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white" />
-  <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" />
-  <img alt="Vite" src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white" />
+  <img alt="Angular" src="https://img.shields.io/badge/Angular-19-DD0031?logo=angular&logoColor=white" />
   <img alt="Tailwind" src="https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white" />
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white" />
 </a>
@@ -31,7 +30,7 @@ Sistema de gestión de parqueaderos de código abierto. Incluye una **API REST**
 ```
 .
 ├── backend/       # API Spring Boot (Java 17, Maven)
-├── frontend/      # SPA React + Vite + Tailwind CSS
+├── frontend/      # SPA Angular 19 + Tailwind CSS (servida por Nginx)
 ├── db/            # Scripts SQL de la base de datos
 ├── docs/          # Documentación del proyecto
 └── .github/       # CI/CD (GitHub Actions)
@@ -61,7 +60,7 @@ Toda la documentación está en [`docs/`](./docs/README.md):
 ### Requisitos previos
 
 - **Backend**: Java 17+, Maven 3.6+ (o `./mvnw`), PostgreSQL.
-- **Frontend**: Node 18+, npm.
+- **Frontend**: Node 20+, npm (Angular CLI).
 
 ### Backend
 
@@ -127,7 +126,7 @@ El CI [`.github/workflows/docker-image.yml`](./.github/workflows/docker-image.ym
 
 **Backend:** Spring Boot 3.4.3 · Spring Security + JWT · Spring Data JPA · PostgreSQL · SpringDoc OpenAPI · Lombok · Mercado Pago SDK · JavaMail.
 
-**Frontend:** React 18 · Vite 5 · React Router DOM 7 · Tailwind CSS 3 · Axios · Lucide React.
+**Frontend:** Angular 19 · Angular CLI · TypeScript · Tailwind CSS 3 · RxJS · Nginx.
 
 ---
 

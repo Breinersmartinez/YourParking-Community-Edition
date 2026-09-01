@@ -8,7 +8,7 @@ YourParking expone métricas de su backend (Spring Boot) vía **Spring Boot Actu
 | ---------- | --- | --------- |
 | **Actuator** | Expone los endpoints de métricas del backend. | `http://localhost:8080/actuator/prometheus` |
 | **Prometheus** | Recopila y almacena las métricas (scraping cada 15s). | `http://localhost:9090` |
-| **Grafana** | Dashboards y alertas visuales. | `http://localhost:3000` (admin/admin) |
+| **Grafana** | Dashboards y alertas visuales. | `http://localhost:3000` (admin/admin) en el stack standalone; `http://localhost:3001` en el stack completo. |
 
 ## Arquitectura
 
@@ -46,13 +46,33 @@ curl http://localhost:8080/actuator/health       # {"status":"UP"}
 
 ### 2. Levantar el stack de monitoreo
 
+Hay **dos formas** de levantar Prometheus + Grafana:
+
+- **Stack standalone** (solo monitoreo, para un backend que corre fuera de contenedores):
+
 ```bash
 cd metrics
 docker compose up -d
 ```
 
+- **Stack completo** (todo el proyecto, `docker-compose.yml` raíz):
+
+```bash
+make up   # o: docker compose up -d
+```
+
+| Puerto | Stack standalone (`metrics/`) | Stack completo (raíz) |
+| ------ | ----------------------------- | --------------------- |
+| Prometheus | **9090** | **9090** |
+| Grafana | **3000** | **3001** (configurable con `GRAFANA_PORT`) |
+
+Accesos:
+
 - **Prometheus** → http://localhost:9090
-- **Grafana** → http://localhost:3000 (usuario/contraseña por defecto: `admin` / `admin`)
+- **Grafana standalone** → http://localhost:3000 (usuario/contraseña por defecto: `admin` / `admin`)
+- **Grafana en el stack completo** → http://localhost:3001 (usuario/contraseña por defecto: `admin` / `admin`)
+
+> En el stack completo, Grafana usa el puerto externo `3001` para no chocar con el frontend, que ocupa el `3000`.
 
 Grafana ya trae provisionados el datasource `Prometheus` y el dashboard **"YourParking - Métricas del Backend"**.
 

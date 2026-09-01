@@ -3,7 +3,7 @@
 Sistema de gestión de parqueaderos de código abierto que consta de dos partes:
 
 - **`backend/`** — API REST con **Spring Boot 3.4.3** (Java 17, Spring Security + JWT, Spring Data JPA, PostgreSQL).
-- **`frontend/`** — aplicación web **React 18 + Vite** con Tailwind CSS, estilizada con la paleta corporativa de parqueadero (naranja, negro, grises y amarillo).
+- **`frontend/`** — aplicación web **Angular 19** con Tailwind CSS, estilizada con la paleta corporativa de parqueadero (naranja, negro, grises y amarillo).
 
 Este índice reúne toda la documentación técnica del proyecto.
 
