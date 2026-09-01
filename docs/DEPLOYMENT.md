@@ -144,6 +144,32 @@ En el servidor se suben `docker-compose.yml` + `docker-compose.prod.yml` (que ha
 
 ---
 
+## Despliegue del frontend en Vercel
+
+El frontend Angular está preparado para Vercel con un `frontend/vercel.json` (build command, output y rewrites SPA).
+
+> **Importante:** Vercel solo aloja el **frontend estático**. El backend (Spring Boot/Java) y PostgreSQL **no** corren en Vercel; despliégalos en otro proveedor (Render, Railway, Fly.io, un VPS o Docker) y apunta `API_URL` a su dominio.
+
+### Configuración recomendada en el dashboard de Vercel
+
+1. **Importar** el repositorio (Vercel detecta el monorepo).
+2. **Root Directory** → `frontend/` (para que use el `vercel.json` y el `package.json` del frontend).
+3. **Framework Preset** → `Angular` (detectado por `vercel.json`).
+4. **Variable de entorno** → `API_URL` con el dominio del backend desplegado, p. ej. `https://mi-backend.railway.app`.
+
+El `buildCommand` de `vercel.json` inyecta `API_URL` en `src/environments/environment.prod.ts` (mismo mecanismo `sed` que usa el Dockerfile) y luego ejecuta el build de producción de Angular.
+
+### Qué hace `frontend/vercel.json`
+
+- `framework: "angular"` y `outputDirectory: "dist/parking-frontend/browser"`.
+- `installCommand: "npm ci"` (instalación reproducible con el lockfile).
+- `buildCommand`: sustituye `apiUrl` con `${API_URL:-http://localhost:8080}` y ejecuta `npm run build:prod`.
+- `rewrites: /(.*) → /index.html`: fallback SPA (defensivo; con HashRouter las rutas internas ya caen en `index.html`).
+
+> Si no defines la variable de entorno `API_URL`, el frontend quedará apuntando a `http://localhost:8080` (útil para pruebas, **no** para producción).
+
+---
+
 ## Buenas prácticas de seguridad
 
 - **Nunca** commitear credenciales reales (`.env`, `parking-management-api.env`, tokens). Están ignorados por `.gitignore`.
