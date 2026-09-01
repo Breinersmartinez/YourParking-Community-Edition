@@ -14,7 +14,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, String> {
 
     Optional<Vehicle> findByPlate(String plate);
 
-    Optional<Vehicle> deleteByPlate(String plate);
+    void deleteByPlate(String plate);
 
     List<Vehicle> findByOwner_IdCard(Integer idCard);
 }

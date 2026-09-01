@@ -13,4 +13,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findBySpace_IdEspacio(Long idEspacio);
     List<Reservation> findByEstado(ReservationState estado);
     boolean existsBySpace_IdEspacioAndEstadoIn(Long idEspacio, List<ReservationState> estados);
+    List<Reservation> findBySpace_IdEspacioAndEstadoIn(Long idEspacio, List<ReservationState> estados);
 }

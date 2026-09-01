@@ -7,12 +7,14 @@ import com.example.parking_management.model.reservation.enums.ReservationState;
 import com.example.parking_management.model.space.Space;
 import com.example.parking_management.model.space.enums.SpaceState;
 import com.example.parking_management.model.user.User;
+import com.example.parking_management.repository.LevelRepository;
 import com.example.parking_management.repository.ReservationRepository;
 import com.example.parking_management.repository.SpaceRepository;
 import com.example.parking_management.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +24,16 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final SpaceRepository spaceRepository;
+    private final LevelRepository levelRepository;
 
     public ReservationService(ReservationRepository reservationRepository,
                               UserRepository userRepository,
-                              SpaceRepository spaceRepository) {
+                              SpaceRepository spaceRepository,
+                              LevelRepository levelRepository) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
+        this.levelRepository = levelRepository;
     }
 
     public List<ReservationResponse> getAllReservations() {
@@ -67,12 +72,19 @@ public class ReservationService {
             throw new RuntimeException("El espacio no está disponible para reservar");
         }
 
-        // Verificar reservas activas sobre el espacio
-        boolean tieneReservaActiva = reservationRepository
-                .existsBySpace_IdEspacioAndEstadoIn(request.getIdEspacio(),
+        // Verificar solapamiento temporal con reservas activas sobre el espacio
+        List<Reservation> reservasEspacio = reservationRepository
+                .findBySpace_IdEspacioAndEstadoIn(request.getIdEspacio(),
                         List.of(ReservationState.PENDIENTE, ReservationState.CONFIRMADA));
-        if (tieneReservaActiva) {
-            throw new RuntimeException("El espacio ya tiene una reserva activa");
+
+        LocalDateTime nuevoInicio = request.getFechaHoraInicio();
+        LocalDateTime nuevoFin = request.getFechaHoraFin();
+
+        boolean solape = reservasEspacio.stream().anyMatch(existente ->
+                nuevoInicio.isBefore(existente.getFechaHoraFin()) && nuevoFin.isAfter(existente.getFechaHoraInicio()));
+
+        if (solape) {
+            throw new RuntimeException("El espacio ya está reservado en ese periodo");
         }
 
         Reservation reservation = Reservation.builder()
@@ -86,8 +98,11 @@ public class ReservationService {
 
         Reservation saved = reservationRepository.save(reservation);
 
-        space.setEstado(SpaceState.RESERVADO);
-        spaceRepository.save(space);
+        if (space.getEstado() == SpaceState.DISPONIBLE) {
+            space.setEstado(SpaceState.RESERVADO);
+            spaceRepository.save(space);
+            decrementLevelCounter(space);
+        }
 
         return convertToResponse(saved);
     }
@@ -106,6 +121,7 @@ public class ReservationService {
         if (space != null) {
             if (estado == ReservationState.CANCELADA || estado == ReservationState.CUMPLIDA) {
                 space.setEstado(SpaceState.DISPONIBLE);
+                incrementLevelCounter(space);
             } else if (estado == ReservationState.CONFIRMADA && anterior == ReservationState.PENDIENTE) {
                 space.setEstado(SpaceState.RESERVADO);
             }
@@ -124,6 +140,25 @@ public class ReservationService {
         if (space != null) {
             space.setEstado(SpaceState.DISPONIBLE);
             spaceRepository.save(space);
+            incrementLevelCounter(space);
+        }
+    }
+
+    private void decrementLevelCounter(Space space) {
+        if (space.getNivel() != null) {
+            levelRepository.findById(space.getNivel().getIdPiso()).ifPresent(level -> {
+                level.setEspaciosDisponibles(Math.max(0, (level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) - 1));
+                levelRepository.save(level);
+            });
+        }
+    }
+
+    private void incrementLevelCounter(Space space) {
+        if (space.getNivel() != null) {
+            levelRepository.findById(space.getNivel().getIdPiso()).ifPresent(level -> {
+                level.setEspaciosDisponibles((level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) + 1);
+                levelRepository.save(level);
+            });
         }
     }
 

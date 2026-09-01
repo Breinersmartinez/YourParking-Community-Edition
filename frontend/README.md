@@ -1,77 +1,59 @@
-# 🅿️ YourParking — Frontend
+# ParkingFrontend
 
-Aplicación web (SPA) del sistema de gestión de parqueaderos **YourParking**. Construida con **React 18**, **Vite**, **React Router DOM 7** y **Tailwind CSS**, con la paleta corporativa de parqueadero (naranja, negro, grises y amarillo).
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
-Incluye una landing pública, un panel de administración completo y un portal para clientes. Consume la API REST del backend (Spring Boot).
+## Development server
 
----
-
-## 🚀 Inicio rápido
+To start a local development server, run:
 
 ```bash
-npm install        # instalar dependencias
-npm run dev        # servidor de desarrollo
+ng serve
 ```
 
-La app abre en `http://localhost:5173` y apunta a la API en `http://localhost:8080`.
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-### Scripts
+## Code scaffolding
 
-| Comando | Descripción |
-| ------- | ----------- |
-| `npm run dev` | Servidor de desarrollo (Vite). |
-| `npm run build` | Build de producción (carpeta `dist/`). |
-| `npm run lint` | Análisis estático con ESLint (`--max-warnings 0`). |
-| `npm run preview` | Previsualización del build. |
-| `npm run start` | Dev server en el puerto 3000. |
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
----
-
-## 📂 Estructura
-
-```
-src/
-├── main.jsx                # Punto de entrada
-├── App.jsx                 # Sistema de rutas
-├── index.css               # Utilidades y componentes CSS (Tailwind v3)
-├── constants/              # Datos de la landing (features, pricing, testimonios...)
-├── components/             # Componentes de la landing + UI reutilizable
-│   └── ui/                 # Badge, DataTable, EmptyState, Modal, PageHeader, Spinner, StatCard
-├── layouts/                # AdminLayout (sidebar) y ClientLayout (portal)
-├── pages/                  # Páginas de la aplicación
-├── services/               # apiClient, AuthService, index (endpoints + ENUMS)
-└── utils/format.js         # Formateadores de moneda y fechas
+```bash
+ng generate component component-name
 ```
 
----
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-## 🧭 Rutas principales
+```bash
+ng generate --help
+```
 
-- `/` — Landing page.
-- `/login`, `/clientSignUp` — Autenticación y registro.
-- `/portal` — Dashboard del cliente (vehículos, reservas, suscripciones).
-- `/admin` y subrutas — Panel de administración (dashboard, espacios, niveles/zonas, tickets, reservas, incidentes, vehículos, usuarios, tarifas, pagos).
-- `/chatBot` — Asistente virtual.
+## Building
 
-> Consulta `docs/FRONTEND.md` para el detalle completo de rutas y el diseño del sistema.
+To build the project run:
 
----
+```bash
+ng build
+```
 
-## 🔌 Variables de entorno (`.env`)
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-| Variable | Descripción |
-| -------- | ----------- |
-| `VITE_API_URL` | URL base de la API backend. Local: `http://localhost:8080`. |
-| `VITE_API_BREINLOGIC_URL` | Endpoint del asistente virtual (ChatBot) — opcional. |
+## Running unit tests
 
----
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
-## 🧰 Stack
+```bash
+ng test
+```
 
-React 18 · Vite 5 · React Router DOM 7 · Tailwind CSS 3 · Axios · Lucide React · React Icons · ESLint.
+## Running end-to-end tests
 
----
+For end-to-end (e2e) testing, run:
 
-## 📚 Documentación
+```bash
+ng e2e
+```
 
-La documentación completa del monorepo está en la carpeta [`docs/`](../docs/) (índice: [`docs/README.md`](../docs/README.md)).
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

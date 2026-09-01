@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "PISO")
-public class Level extends Auditable<Level> {
+public class Level extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

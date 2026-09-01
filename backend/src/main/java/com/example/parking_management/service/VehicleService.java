@@ -79,6 +79,28 @@ public class VehicleService {
     }
 
     @Transactional
+    public VehicleResponse update(String plate, VehicleRequest request) {
+        Vehicle vehicle = vehicleRepository.findByPlate(plate)
+                .orElseThrow(() -> new RuntimeException("El Vehiculo no existe con placa: " + plate));
+
+        vehicle.setTypeVehicle(request.getTypeVehicle());
+        vehicle.setBrandVehicle(request.getBrandVehicle());
+        vehicle.setColorVehicle(request.getColorVehicle());
+        vehicle.setPropertyCard(request.getPropertyCard());
+        vehicle.setEntryDate(request.getEntryDate());
+        vehicle.setDepartureDate(request.getDepartureDate());
+
+        if (request.getOwnerIdCard() != null) {
+            User owner = userRepository.findById(request.getOwnerIdCard())
+                    .orElseThrow(() -> new RuntimeException("Usuario propietario no encontrado con ID: " + request.getOwnerIdCard()));
+            vehicle.setOwner(owner);
+        }
+
+        vehicleRepository.save(vehicle);
+        return convertToResponse(vehicle);
+    }
+
+    @Transactional
     public void delete(String plate) {
         vehicleRepository.deleteByPlate(plate);
     }
@@ -87,6 +109,7 @@ public class VehicleService {
     private VehicleResponse convertToResponse(Vehicle vehicle) {
         return VehicleResponse.builder()
                 .plate(vehicle.getPlate())
+                .typeVehicle(vehicle.getTypeVehicle())
                 .brandVehicle(vehicle.getBrandVehicle())
                 .colorVehicle(vehicle.getColorVehicle())
                 .departureDate(vehicle.getDepartureDate())

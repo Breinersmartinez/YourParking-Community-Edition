@@ -74,6 +74,17 @@ public class VehicleController {
 
     }
 
+    // Actualizar vehículo por placa
+    @PutMapping("/{plate}")
+    public ResponseEntity<VehicleResponse> update(@PathVariable("plate") String plate,
+                                                  @RequestBody VehicleRequest request) {
+        try {
+            return ResponseEntity.ok(vehicleService.update(plate, request));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
     @DeleteMapping("/{plate}")
     public void saveOrUpdate(@PathVariable("plate") String plate) {

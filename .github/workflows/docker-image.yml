@@ -53,7 +53,7 @@ jobs:
             file: ./frontend/Dockerfile
             # build-arg del frontend; en producción apunta al desplegado.
             # Si tu CI despliega el stack completo, es "http://localhost:8080".
-            build_arg: VITE_API_URL=http://localhost:8080
+            build_arg: API_URL=http://localhost:8080
     outputs:
       image: ${{ env.REGISTRY_IMAGE }}/${{ matrix.component }}
     steps:

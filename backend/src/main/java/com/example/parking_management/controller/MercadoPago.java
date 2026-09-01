@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 import com.mercadopago.exceptions.MPApiException;
@@ -21,6 +22,7 @@ import com.mercadopago.exceptions.MPException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@RestController
 @RequestMapping("/api/v1/mercadopago")
 @CrossOrigin(origins = "*")
 public class MercadoPago {
@@ -70,19 +72,39 @@ public class MercadoPago {
     }
 
     @PostMapping(value = "notify")
-    public void notifyPay(@RequestBody MpNotifyDTO mpNotify) {
+    public void notifyPay(@RequestBody(required = false) MpNotifyDTO mpNotify) {
         // Crear una instancia del logger para registrar información y eventos.
         Logger logger = LoggerFactory.getLogger(this.getClass());
 
         // Registrar la notificación recibida.
-        // Esto imprime la información de la notificación de pago a los registros
-        // (logs).
+        if (mpNotify == null) {
+            logger.info("Notificación de MercadoPago recibida sin cuerpo (body nulo)");
+            return;
+        }
         logger.info(mpNotify.toString());
 
-        // Aquí recibimos la notificación del pago de MercadoPago.
-        // Podemos realizar cualquier acción necesaria con esta información,
-        // como guardar los detalles del pago en la base de datos,
-        // actualizar el estado de una orden, enviar notificaciones a los usuarios, etc.
+        // MercadoPago envía notificaciones de varios tipos: payment, plan, subscription, etc.
+        // Solo procesamos las de tipo 'payment', que tienen el id del pago en data.id.
+        if (!"payment".equals(mpNotify.getType())) {
+            logger.info("Notificación ignorada (tipo: {})", mpNotify.getType());
+            return;
+        }
+
+        String paymentId = mpNotify.getData() != null ? mpNotify.getData().getId() : null;
+        if (paymentId == null) {
+            logger.warn("Notificación de pago sin id de pago en data");
+            return;
+        }
+
+        try {
+            var pay = mercadoPagoService.getPago(paymentId);
+            logger.info("Pago recuperado de MercadoPago: id={}, estado={}, detalle={}",
+                    pay != null ? pay.getPayment_id() : null,
+                    pay != null ? pay.getStatus() : null,
+                    pay != null ? pay.getStatus_detail() : null);
+        } catch (Exception e) {
+            logger.error("Error recuperando el pago {} de MercadoPago", paymentId, e);
+        }
     }
 
 }

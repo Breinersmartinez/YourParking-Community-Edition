@@ -8,6 +8,7 @@ import com.example.parking_management.model.space.enums.SpaceState;
 import com.example.parking_management.model.ticket.Ticket;
 import com.example.parking_management.model.ticket.enums.TicketState;
 import com.example.parking_management.model.vehicles.Vehicle;
+import com.example.parking_management.repository.LevelRepository;
 import com.example.parking_management.repository.SpaceRepository;
 import com.example.parking_management.repository.TicketRepository;
 import com.example.parking_management.repository.VehicleRepository;
@@ -25,13 +26,15 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final VehicleRepository vehicleRepository;
     private final SpaceRepository spaceRepository;
+    private final LevelRepository levelRepository;
     private final RateService rateService;
 
     public TicketService(TicketRepository ticketRepository, VehicleRepository vehicleRepository,
-                         SpaceRepository spaceRepository, RateService rateService) {
+                         SpaceRepository spaceRepository, LevelRepository levelRepository, RateService rateService) {
         this.ticketRepository = ticketRepository;
         this.vehicleRepository = vehicleRepository;
         this.spaceRepository = spaceRepository;
+        this.levelRepository = levelRepository;
         this.rateService = rateService;
     }
 
@@ -76,6 +79,13 @@ public class TicketService {
         space.setEstado(SpaceState.OCUPADO);
         spaceRepository.save(space);
 
+        if (space.getNivel() != null) {
+            levelRepository.findById(space.getNivel().getIdPiso()).ifPresent(level -> {
+                level.setEspaciosDisponibles(Math.max(0, (level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) - 1));
+                levelRepository.save(level);
+            });
+        }
+
         return convertToResponse(saved);
     }
 
@@ -89,7 +99,11 @@ public class TicketService {
         }
 
         LocalDateTime exit = request.getExitDate() != null ? request.getExitDate() : LocalDateTime.now();
-        BigDecimal total = rateService.calculateCost(ticket.getVehicle().getTypeVehicle(), ticket.getEntryDate(), exit);
+        String typeVehicle = ticket.getVehicle() != null ? ticket.getVehicle().getTypeVehicle() : null;
+        if (typeVehicle == null || typeVehicle.isBlank()) {
+            throw new RuntimeException("El vehículo no tiene un tipo de vehículo asignado, no se puede calcular el costo");
+        }
+        BigDecimal total = rateService.calculateCost(typeVehicle, ticket.getEntryDate(), exit);
 
         ticket.close(exit, total);
 
@@ -99,6 +113,12 @@ public class TicketService {
         if (space != null) {
             space.setEstado(SpaceState.DISPONIBLE);
             spaceRepository.save(space);
+            if (space.getNivel() != null) {
+                levelRepository.findById(space.getNivel().getIdPiso()).ifPresent(level -> {
+                    level.setEspaciosDisponibles((level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) + 1);
+                    levelRepository.save(level);
+                });
+            }
         }
 
         return convertToResponse(saved);
@@ -118,6 +138,12 @@ public class TicketService {
         if (space != null) {
             space.setEstado(SpaceState.DISPONIBLE);
             spaceRepository.save(space);
+            if (space.getNivel() != null) {
+                levelRepository.findById(space.getNivel().getIdPiso()).ifPresent(level -> {
+                    level.setEspaciosDisponibles((level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) + 1);
+                    levelRepository.save(level);
+                });
+            }
         }
         return convertToResponse(saved);
     }

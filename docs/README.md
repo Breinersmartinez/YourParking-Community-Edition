@@ -3,7 +3,7 @@
 Sistema de gestión de parqueaderos de código abierto que consta de dos partes:
 
 - **`backend/`** — API REST con **Spring Boot 3.4.3** (Java 17, Spring Security + JWT, Spring Data JPA, PostgreSQL).
-- **`frontend/`** — aplicación web **React 18 + Vite** con Tailwind CSS, estilizada con la paleta corporativa de parqueadero (naranja, negro, grises y amarillo).
+- **`frontend/`** — aplicación web **Angular 19** con Tailwind CSS, estilizada con la paleta corporativa de parqueadero (naranja, negro, grises y amarillo).
 
 Este índice reúne toda la documentación técnica del proyecto.
 
@@ -47,10 +47,10 @@ La API queda disponible en `http://localhost:8080` y la documentación Swagger e
 ```bash
 cd frontend
 npm install
-npm run dev        # servidor de desarrollo (Vite)
+npm start         # servidor de desarrollo (Angular, puerto 4200)
 ```
 
-La app abre en `http://localhost:5173` y consume la API en `http://localhost:8080` (configurable vía `VITE_API_URL`).
+La app abre en `http://localhost:4200` y consume la API en `http://localhost:8080` (configurable vía `environment.apiUrl` / build-arg `API_URL`).
 
 ---
 
@@ -63,6 +63,6 @@ La app abre en `http://localhost:5173` y consume la API en `http://localhost:808
 | `/clientSignUp` | Pública | Registro de clientes. |
 | `/portal` | Cliente (autenticado) | Dashboard del cliente: vehículos, reservas y suscripciones. |
 | `/admin` | Admin (autenticado) | Panel de administración con 10 secciones de gestión. |
-| `/chatBot` | Pública | Asistente virtual (depende de `VITE_API_BREINLOGIC_URL`). |
+| `/portal/chatbot` | Cliente (autenticado) | Asistente virtual (depende de `breinLogicUrl`). |
 
 Consulta [FRONTEND.md](./FRONTEND.md) para el detalle de rutas y [API.md](./API.md) para los endpoints, si deseas contribuir.

@@ -9,7 +9,7 @@
 ```
 ┌──────────────────────┐        HTTPS/JSON        ┌──────────────────────────────────┐
 │      FRONTEND        │  ──────────────────────► │              BACKEND              │
-│   React 18 + Vite    │                          │      Spring Boot 3.4.3 (Java 17)  │
+│   Angular 19         │                          │      Spring Boot 3.4.3 (Java 17)  │
 │   Tailwind CSS       │                          │  Spring Security + JWT            │
 │   (Browser)          │                          │  Spring Data JPA                  │
 └──────────────────────┘                          │  SpringDoc OpenAPI (Swagger)      │
@@ -44,16 +44,16 @@ API REST alojada en el puerto `8080`. Tecnologías principales:
 
 ### Frontend (`frontend/`)
 
-SPA servida por Vite en el puerto `5173` (desarrollo). Tecnologías:
+SPA servida por **Nginx** en el puerto `3000` (producción) y por el dev server de **Angular CLI** (`ng serve`) en el puerto `4200` (desarrollo). Tecnologías:
 
 | Tecnología | Uso |
 | ---------- | --- |
-| React 18 | Biblioteca de interfaz. |
-| Vite 5 | Herramienta de build y dev server. |
-| React Router DOM 7 | Enrutamiento del lado del cliente. |
+| Angular 19 | Framework de interfaz (TypeScript). |
+| Angular CLI | Build, dev server y scaffolding. |
+| Angular Router (HashRouter) | Enrutamiento del lado del cliente. |
+| RxJS | Programación reactiva y clientes HTTP. |
 | Tailwind CSS 3 | Framework de estilos utility-first. |
-| Axios | Cliente HTTP para consumir la API. |
-| Lucide React / React Icons | Librerías de iconos. |
+| Nginx | Servidor estático del build de producción. |
 
 ---
 
@@ -67,16 +67,22 @@ YourParking-Community-Edition/
 │   ├── Dockerfile                # Imagen multi-stage
 │   ├── mvnw / mvnw.cmd / pom.xml
 │   └── .env                      # Variables locales (ignorado por git)
-├── frontend/                     # SPA React + Vite
+├── frontend/                     # SPA Angular 19
+│   ├── angular.json              # Configuración del Angular CLI (build, fileReplacements)
 │   ├── src/
-│   │   ├── components/           # Componentes de la landing + ui/
-│   │   ├── layouts/              # AdminLayout, ClientLayout
-│   │   ├── pages/                # Páginas de la aplicación
-│   │   ├── services/             # Cliente API + AuthService
-│   │   ├── utils/                # Funciones de formato
-│   │   ├── App.jsx               # Configuración de rutas
-│   │   └── main.jsx              # Punto de entrada
-│   ├── tailwind.config.js        # Paleta y tema
+│   │   ├── environments/         # environment.ts / environment.prod.ts (apiUrl, breinLogicUrl)
+│   │   ├── styles.css            # Utilities y componentes CSS (Tailwind)
+│   │   └── app/
+│   │       ├── app.config.ts     # Providers (router con HashRouter, HTTP)
+│   │       ├── app.routes.ts     # Sistema de rutas
+│   │       ├── landing/          # Landing pública (navbar, hero, features, ...)
+│   │       ├── auth/             # login / signup
+│   │       ├── layouts/          # AdminLayout, ClientLayout
+│   │       ├── pages/            # Páginas del panel admin y del cliente
+│   │       ├── core/             # services (api, auth, interceptor), guards, models/enums
+│   │       └── shared/           # UI reutilizable, iconos y constantes
+│   ├── Dockerfile                # Build multi-stage (Angular + Nginx)
+│   ├── nginx.conf                # Config de Nginx (SPA con HashRouter)
 │   └── package.json
 ├── db/                           # Scripts SQL de la base de datos
 ├── docs/                         # Documentación del proyecto

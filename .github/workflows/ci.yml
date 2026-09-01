@@ -1,7 +1,7 @@
 name: CI — Build & Test
 
 # Integración continua: compila, ejecuta tests y genera artefactos
-# del backend (Spring Boot) y del frontend (React) en cada PR y push
+# del backend (Spring Boot) y del frontend (Angular) en cada PR y push
 # a las ramas estables.
 
 on:

@@ -64,23 +64,30 @@ public class SpaceService {
 
     @Transactional
     public SpaceResponse createSpace(SpaceRequest request) {
+        if (request.getIdPiso() == null) {
+            throw new RuntimeException("El piso es obligatorio para crear un espacio");
+        }
+        Level level = levelRepository.findById(request.getIdPiso())
+                .orElseThrow(() -> new RuntimeException("Piso no encontrado con ID: " + request.getIdPiso()));
         Space space = Space.builder()
                 .numeroEspacio(request.getNumeroEspacio())
                 .estado(request.getEstado() != null ? request.getEstado() : SpaceState.DISPONIBLE)
                 .tipoEspacio(request.getTipoEspacio())
                 .dimensiones(request.getDimensiones())
                 .build();
-        if (request.getIdPiso() != null) {
-            Level level = levelRepository.findById(request.getIdPiso())
-                    .orElseThrow(() -> new RuntimeException("Piso no encontrado con ID: " + request.getIdPiso()));
-            space.setNivel(level);
-        }
+        space.setNivel(level);
         if (request.getIdZona() != null) {
             Zone zone = zoneRepository.findById(request.getIdZona())
                     .orElseThrow(() -> new RuntimeException("Zona no encontrada con ID: " + request.getIdZona()));
             space.setZona(zone);
         }
         Space saved = spaceRepository.save(space);
+
+        level.setCapacidadTotal((level.getCapacidadTotal() != null ? level.getCapacidadTotal() : 0) + 1);
+        if (saved.getEstado() == SpaceState.DISPONIBLE) {
+            level.setEspaciosDisponibles((level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) + 1);
+        }
+        levelRepository.save(level);
         return convertToResponse(saved);
     }
 
@@ -88,6 +95,8 @@ public class SpaceService {
     public SpaceResponse updateSpace(Long id, SpaceRequest request) {
         Space space = spaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Espacio no encontrado con ID: " + id));
+        SpaceState estadoAnterior = space.getEstado();
+        Level nivelAnterior = space.getNivel();
         if (request.getNumeroEspacio() != null) {
             space.setNumeroEspacio(request.getNumeroEspacio());
         }
@@ -109,15 +118,58 @@ public class SpaceService {
                     .orElseThrow(() -> new RuntimeException("Zona no encontrada con ID: " + request.getIdZona())));
         }
         Space updated = spaceRepository.save(space);
+
+        Level nivelNuevo = space.getNivel();
+        SpaceState estadoNuevo = space.getEstado();
+
+        if (nivelNuevo != null) {
+            if (nivelAnterior != null && !nivelAnterior.getIdPiso().equals(nivelNuevo.getIdPiso())) {
+                decrementarDisponibilidad(nivelAnterior, estadoAnterior);
+                nivelAnterior.setCapacidadTotal(Math.max(0, (nivelAnterior.getCapacidadTotal() != null ? nivelAnterior.getCapacidadTotal() : 0) - 1));
+                levelRepository.save(nivelAnterior);
+
+                nivelNuevo.setCapacidadTotal((nivelNuevo.getCapacidadTotal() != null ? nivelNuevo.getCapacidadTotal() : 0) + 1);
+                if (estadoNuevo == SpaceState.DISPONIBLE) {
+                    nivelNuevo.setEspaciosDisponibles((nivelNuevo.getEspaciosDisponibles() != null ? nivelNuevo.getEspaciosDisponibles() : 0) + 1);
+                }
+                levelRepository.save(nivelNuevo);
+            } else {
+                if (estadoAnterior != estadoNuevo) {
+                    if (estadoAnterior == SpaceState.DISPONIBLE) {
+                        decrementarDisponibilidad(nivelNuevo, estadoAnterior);
+                    } else if (estadoNuevo == SpaceState.DISPONIBLE) {
+                        nivelNuevo.setEspaciosDisponibles((nivelNuevo.getEspaciosDisponibles() != null ? nivelNuevo.getEspaciosDisponibles() : 0) + 1);
+                    }
+                    levelRepository.save(nivelNuevo);
+                }
+            }
+        }
         return convertToResponse(updated);
+    }
+
+    private void decrementarDisponibilidad(Level level, SpaceState estado) {
+        if (level != null && estado == SpaceState.DISPONIBLE) {
+            level.setEspaciosDisponibles(Math.max(0, (level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) - 1));
+        }
     }
 
     @Transactional
     public SpaceResponse changeState(Long id, SpaceState state) {
         Space space = spaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Espacio no encontrado con ID: " + id));
+        SpaceState estadoAnterior = space.getEstado();
         space.setEstado(state);
         Space updated = spaceRepository.save(space);
+
+        Level level = space.getNivel();
+        if (level != null && estadoAnterior != state) {
+            if (estadoAnterior == SpaceState.DISPONIBLE) {
+                decrementarDisponibilidad(level, estadoAnterior);
+            } else if (state == SpaceState.DISPONIBLE) {
+                level.setEspaciosDisponibles((level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) + 1);
+            }
+            levelRepository.save(level);
+        }
         return convertToResponse(updated);
     }
 
@@ -125,7 +177,15 @@ public class SpaceService {
     public void deleteSpace(Long id) {
         Space space = spaceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Espacio no encontrado con ID: " + id));
+        Level level = space.getNivel();
         spaceRepository.delete(space);
+        if (level != null) {
+            level.setCapacidadTotal(Math.max(0, (level.getCapacidadTotal() != null ? level.getCapacidadTotal() : 0) - 1));
+            if (space.getEstado() == SpaceState.DISPONIBLE) {
+                level.setEspaciosDisponibles(Math.max(0, (level.getEspaciosDisponibles() != null ? level.getEspaciosDisponibles() : 0) - 1));
+            }
+            levelRepository.save(level);
+        }
     }
 
     private SpaceResponse convertToResponse(Space space) {

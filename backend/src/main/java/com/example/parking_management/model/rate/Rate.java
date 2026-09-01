@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TARIFA")
-public class Rate extends Auditable<Rate> {
+public class Rate extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
