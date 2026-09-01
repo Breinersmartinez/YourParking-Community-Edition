@@ -8,6 +8,7 @@ import com.example.parking_management.jwt.JwtService;
 
 
 import com.example.parking_management.model.user.User;
+import com.example.parking_management.model.user.enums.Role;
 import com.example.parking_management.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +67,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword())); // Encriptar contraseña
         user.setPhoneNumber(request.getPhoneNumber());
         user.setDirection(request.getDirection());
-        user.setRole(request.getRole());
+        user.setRole(Role.USER);
         user.setRegistrationDate(LocalDateTime.now());
         user.setActive(true);
 
@@ -77,7 +78,7 @@ public class AuthService {
         msg.setTo(user.getEmail());
         msg.setSubject("¡Bienvenido al sistema de Parqueadero! "); // Asunto más claro
         msg.setText(
-                "Hola " + user.getFirstName() + ",\n\n" + user.getLastName() + ",\n\n" +
+                "Hola " + user.getFirstName() + " " + user.getLastName() + ",\n\n" +
                         "Tu registro en el sistema de parqueadero se ha realizado con éxito.\n\n" +
                         " Fecha de registro: " + user.getRegistrationDate() + "\n" +
                         " Usuario (email): " + user.getEmail() + "\n\n" +

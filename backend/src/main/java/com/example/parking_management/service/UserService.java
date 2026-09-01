@@ -77,6 +77,10 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
+        if (request.getIdentificationType() != null) {
+            user.setIdentificationType(request.getIdentificationType());
+        }
+
         if (request.getPhoneNumber() != null) {
             user.setPhoneNumber(request.getPhoneNumber());
         }
