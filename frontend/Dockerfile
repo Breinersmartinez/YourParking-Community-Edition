@@ -1,4 +1,4 @@
-# Stage 1: Build de la SPA con Node
+# Stage 1: Build de la SPA con Angular
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -9,14 +9,14 @@ RUN npm ci
 
 # Copia el código fuente y compila
 COPY . .
-ARG VITE_API_URL=http://localhost:8080
-ENV VITE_API_URL=$VITE_API_URL
-RUN npm run build
+ARG API_URL=http://localhost:8080
+RUN sed -i "s|apiUrl: '.*'|apiUrl: '${API_URL}'|" src/environments/environment.prod.ts
+RUN npm run build:prod
 
 # Stage 2: Servir con Nginx
 FROM nginx:1.27-alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist/parking-frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

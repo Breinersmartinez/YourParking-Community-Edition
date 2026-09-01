@@ -80,14 +80,14 @@ services:
       - yp-net
 
   # ---------------------------------------------------------------
-  # Frontend (React + Vite servido por Nginx).
-  # El navegador consume la API en VITE_API_URL (default localhost:8080).
+  # Frontend (Angular servido por Nginx).
+  # El navegador consume la API en API_URL (default localhost:8080).
   # ---------------------------------------------------------------
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+        API_URL: ${API_URL:-http://localhost:8080}
     container_name: yp-frontend
     restart: unless-stopped
     depends_on:
