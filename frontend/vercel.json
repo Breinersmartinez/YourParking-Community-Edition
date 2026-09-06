@@ -3,7 +3,7 @@
   "outputDirectory": "dist/parking-frontend/browser",
   "framework": "angular",
   "installCommand": "npm ci",
-  "buildCommand": "sed -i \"s|apiUrl: '.*'|apiUrl: '${API_URL:-http://localhost:8080}'|\" src/environments/environment.prod.ts && npm run build:prod",
+  "buildCommand": "sed -i \"s|apiUrl: '.*'|apiUrl: '${VITE_API_URL}'|\" src/environments/environment.prod.ts && npm run build:prod",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

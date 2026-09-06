@@ -46,11 +46,12 @@ cd frontend
 npm install
 npm run build        # genera dist/parking-frontend/browser
 ```
-Variables del frontend: en Angular no hay `.env` en runtime; la URL de la API se inyecta en el build de producción y en Docker vía el build-arg `API_URL` (`frontend/src/environments/environment.prod.ts`).
+Variables del frontend: en Angular no hay `.env` en runtime; la URL de la API se inyecta en el build de producción — en Docker vía el build-arg `API_URL` y en Vercel vía la variable de entorno `VITE_API_URL` (`frontend/src/environments/environment.prod.ts`).
 
 | Variable | Descripción |
 | -------- | ----------- |
 | `API_URL` | Build-arg del frontend en Docker (producción: apuntar al backend desplegado). |
+| `VITE_API_URL` | Variable de Vercel con la URL del backend (inyectada por `frontend/vercel.json` en el build). |
 | `breinLogicUrl` | Endpoint del ChatBot (opcional, `frontend/src/environments`). |
 
 ---
@@ -140,7 +141,7 @@ En el servidor se suben `docker-compose.yml` + `docker-compose.prod.yml` (que ha
 1. Desplegar el **backend** en cualquier proveedor compatible con Docker (Render, Railway, Fly.io, un VPS, etc.) pasando las variables de entorno.
 2. Crear/actualizar la base **PostgreSQL** y apuntar `URL_DB`.
 3. Construir y servir el **frontend** como estático (Vercel, Netlify, GitHub Pages, S3 + CDN).
-4. Configurar `API_URL` del frontend apuntando al dominio del backend y habilitar el **CORS** del backend para ese dominio.
+4. Configurar la URL del backend apuntando al dominio del backend desplegado — en Docker el build-arg `API_URL`, en Vercel la variable `VITE_API_URL` — y habilitar el **CORS** del backend para ese dominio.
 
 ---
 
@@ -155,18 +156,18 @@ El frontend Angular está preparado para Vercel con un `frontend/vercel.json` (b
 1. **Importar** el repositorio (Vercel detecta el monorepo).
 2. **Root Directory** → `frontend/` (para que use el `vercel.json` y el `package.json` del frontend).
 3. **Framework Preset** → `Angular` (detectado por `vercel.json`).
-4. **Variable de entorno** → `API_URL` con el dominio del backend desplegado, p. ej. `https://mi-backend.railway.app`.
+4. **Variable de entorno** → `VITE_API_URL` con el dominio del backend desplegado, p. ej. `https://mi-backend.railway.app`.
 
-El `buildCommand` de `vercel.json` inyecta `API_URL` en `src/environments/environment.prod.ts` (mismo mecanismo `sed` que usa el Dockerfile) y luego ejecuta el build de producción de Angular.
+El `buildCommand` de `vercel.json` inyecta `VITE_API_URL` en `src/environments/environment.prod.ts` (mismo mecanismo `sed` que usa el Dockerfile) y luego ejecuta el build de producción de Angular.
 
 ### Qué hace `frontend/vercel.json`
 
 - `framework: "angular"` y `outputDirectory: "dist/parking-frontend/browser"`.
 - `installCommand: "npm ci"` (instalación reproducible con el lockfile).
-- `buildCommand`: sustituye `apiUrl` con `${API_URL:-http://localhost:8080}` y ejecuta `npm run build:prod`.
+- `buildCommand`: sustituye `apiUrl` con `${VITE_API_URL}` y ejecuta `npm run build:prod`.
 - `rewrites: /(.*) → /index.html`: fallback SPA (defensivo; con HashRouter las rutas internas ya caen en `index.html`).
 
-> Si no defines la variable de entorno `API_URL`, el frontend quedará apuntando a `http://localhost:8080` (útil para pruebas, **no** para producción).
+> `VITE_API_URL` debe estar definida **siempre** en Vercel: no hay fallback a localhost. Si falta, el build queda con `apiUrl` vacío y las llamadas a la API fallan de forma visible.
 
 ---
 
